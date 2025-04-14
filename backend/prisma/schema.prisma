@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,9 +8,22 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  googleId  String   @unique
-  createdAt DateTime @default(now())
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(60)
+  email String @unique @db.VarChar(60)
+  googleId String @unique @db.VarChar(255)
+  streak Streak[]
+  @@map("user")
+}
+
+
+model Streak{
+  // name TypeData saveAsWhatData
+
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(999)
+  days Int @db.Integer
+  userId Int 
+  user User @relation(fields: [userId], references: [id])
+  @@map("streak")
 }

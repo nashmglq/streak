@@ -1,18 +1,37 @@
-const express = require("express");
-const app = express();
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const jwt = require("jsonwebtoken")
 
-const getGoogle = (req, res) => {
-  const user = req.user;
+const googleAuth = async (req, res) => {
+ try{
+  const { id, displayName, emails } = req.user;
+  // emails return an array, then pick the value(the actual email)
+  const primaryEmail = emails[0].value
+  const userCheck = await prisma.user.findUnique({ where: { email: primaryEmail } });
+
+  if (!userCheck) {
+    user = await prisma.user.create({
+      data: {
+        name: displayName,
+        email: primaryEmail,
+        googleId: id,
+      },
+    });
+  }
   const token = jwt.sign(
     {
-      id: user.id,
-      name: user.displayname,
-      email: user.emails[0].value,
+      id: id,
+      email: emails,
+      name: displayName,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "1hr" }
   );
-  res.json({ token });
+
+  return res.status(200).json({ success: { token: token } });
+ }catch(err){
+    return res.status(500).json({error: err.message})
+ }
 };
 
-module.exports = { getGoogle };
+module.exports = { googleAuth };

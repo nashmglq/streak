@@ -1,10 +1,24 @@
-const express = require("express")
-const route = express.Router()
+const express = require("express");
+const route = express.Router();
 const passport = require("../config/passport");
-const { getGoogle } = require("../contollers/authentication");
+const { googleAuth } = require("../contollers/authentication");
 
-route.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-route.get('/auth/google/callback', getGoogle)
+// passport.authenticate(services, {scope you want to access})
+// pic account
+route.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
+// passport.authenticate(services, {session if use or not, failureRedirect: redirection lin)
+// this will save
+route.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login",
+  }),
+  googleAuth
+);
 
-module.exports = route
+module.exports = route;
