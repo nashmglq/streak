@@ -19,7 +19,6 @@ model User {
 
 model Streak{
   // name TypeData saveAsWhatData
-
   id Int @id @default(autoincrement())
   name String @db.VarChar(999)
   days Int @db.Integer
