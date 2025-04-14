@@ -4,9 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from './screen/landingPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-
 function App() {
-
   return (
     <GoogleOAuthProvider>
       <div className="App">
