@@ -1,7 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const passport = require("../config/passport");
-const { googleAuth } = require("../contollers/authentication");
+const { googleAuth, verifyGoogleToken } = require("../contollers/authentication");
 
 // passport.authenticate(services, {scope you want to access})
 // pic account
@@ -20,5 +20,5 @@ route.get(
   }),
   googleAuth
 );
-
+route.post("/auth/google/verify", verifyGoogleToken);
 module.exports = route;
