@@ -4,38 +4,6 @@ const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const googleAuth = async (req, res) => {
- try{
-  const { id, displayName, emails } = req.user;
-  // emails return an array, then pick the value(the actual email)
-  const primaryEmail = emails[0].value
-  const userCheck = await prisma.user.findUnique({ where: { email: primaryEmail } });
-
-  if (!userCheck) {
-    user = await prisma.user.create({
-      data: {
-        name: displayName,
-        email: primaryEmail,
-        googleId: id,
-      },
-    });
-  }
-  const token = jwt.sign(
-    {
-      id: id,
-      email: emails,
-      name: displayName,
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "1hr" }
-  );
-
-  return res.status(200).json({ success: { token: token } });
- }catch(err){
-    return res.status(500).json({error: err.message})
- }
-};
-
 const verifyGoogleToken = async (req, res) => {
   try {
     const { credential } = req.body;
@@ -59,7 +27,7 @@ const verifyGoogleToken = async (req, res) => {
     try {
       let user = await prisma.user.findUnique({ 
         where: { email },
-        include: { streak: true } // Include streak data if you need it in the response
+        include: { streak: true }
       });
 
       if (!user) {
@@ -115,4 +83,4 @@ const verifyGoogleToken = async (req, res) => {
   }
 };
 
-module.exports = { googleAuth, verifyGoogleToken };
+module.exports = { verifyGoogleToken };
