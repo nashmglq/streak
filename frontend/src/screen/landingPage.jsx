@@ -3,46 +3,6 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
-  const navigate = useNavigate();
-
-  const handleGoogleLoginSuccess = (credentialResponse) => {
-    console.log("Google login successful:", credentialResponse);
-
-    fetch(
-      `${
-        process.env.REACT_APP_API_URL || "http://localhost:5000"
-      }/auth/google/verify`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          credential: credentialResponse.credential,
-        }),
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success && data.success.token) {
-          localStorage.setItem("authToken", data.success.token);
-
-          navigate("/dashboard");
-        }
-      })
-      .catch((error) => {
-        console.error("Error during authentication:", error);
-      });
-  };
-
-  const handleGoogleLoginError = (error) => {
-    console.error("Google login failed:", error);
-  };
 
   return (
     <div className="h-screen flex items-center justify-center">
@@ -56,8 +16,6 @@ const LandingPage = () => {
 
         <div className="my-6">
           <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={handleGoogleLoginError}
             useOneTap
             text="signin_with"
             shape="rectangular"
