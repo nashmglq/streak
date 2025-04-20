@@ -8,43 +8,62 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyGoogleToken = async (req, res) => {
   try {
     const { credential } = req.body;
-    if (!credential) return res.status(400).json({ error: "Credentails are not provided" });
+    if (!credential)
+      return res.status(400).json({ error: "Credentails are not provided" });
 
     const ticket = await client.verifyIdToken({
       // renaming
-      idToken : credential,
-      audience: process.env.GOOGLE_CLIENT_ID
-    })
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
 
-    const payload = ticket.getPayload()
-    const {sub: googleId, email, name} = payload
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
 
-    if(!email) return res.status(400).json({ error: "Email is not provided" });
+    if (!email) return res.status(400).json({ error: "Email is not provided" });
 
-    let user = await prisma.user.findUnique({where: {email}})
+    let user = await prisma.user.findUnique({ where: { email } });
 
-    if(!user){
+    if (!user) {
       // update the user variable
       user = await prisma.user.create({
         data: {
-          name, 
+          name,
           email,
-          googleId // Or pede din si sub
-        }
-      })
+          googleId, // Or pede din si sub
+        },
+      });
     }
 
-  const token = jwt.sign({
-    id: user.id
-  })
+    const token = jwt.sign(
+      {
+        id: user.id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
-  return res.status(200).json({success: token})
+    if (user) return res.status(200).json({ success: token });
 
-
-
+    return res.status(200).json({ success: token });
   } catch (err) {
-    return res.status(500).json({error: err.message})
+    console.log(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { verifyGoogleToken };
+const getProfile = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    return res.status(200).json({ success: [user.email, user.id, user.name] });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { verifyGoogleToken, getProfile };

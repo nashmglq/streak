@@ -1,23 +1,15 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { thunk } from "redux-thunk";
+import {getProfileReducer, googleAuthReducer} from "./reducer/authReducer";
 
 const reducer = combineReducers({
-    
-})
-const intialState = {}; // initial state which can be used in our reducers
+  googleAuth : googleAuthReducer,
+  getProfile : getProfileReducer
+});
 
-// User likes the post -> USER_REQUEST action triggers middleware
-// -> Thunk checks everything (e.g., user login) before sending the like request to the backend
-// -> If all good, backend updates and boom! Like count is updated on the frontend.
-
-const middleware = [thunk];
-
+const preloadedState = {};
 const store = configureStore({
-  // put all here to export everthing
   reducer,
-  intialState,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(middleware),
+  preloadedState,
 });
 
 export default store;

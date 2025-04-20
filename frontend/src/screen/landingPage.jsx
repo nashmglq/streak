@@ -1,8 +1,28 @@
-import React from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { useDispatch, useSelector } from "react-redux";
+import { googleAuthActions } from "../actions/authActions"; // Adjust path as needed
 
 const LandingPage = () => {
+  const dispatch = useDispatch();
+  const nav = useNavigate();
+  const userInfo = localStorage.getItem("userInfo");
+
+
+  const handleGoogleSuccess = (googleCredentials) => {
+    dispatch(
+      googleAuthActions({ credential: googleCredentials.credential }, nav)
+    );
+  };
+
+  const handleGoogleError = () => {
+    console.log("Google Authentication Error");
+  };
+  
+  useEffect(() => {
+    if (userInfo) nav("/dashboard");
+  }, []);
 
   return (
     <div className="h-screen flex items-center justify-center">
@@ -17,6 +37,8 @@ const LandingPage = () => {
         <div className="my-6">
           <GoogleLogin
             useOneTap
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
             text="signin_with"
             shape="rectangular"
             theme="filled_blue"
