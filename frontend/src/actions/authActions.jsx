@@ -7,13 +7,13 @@ import {
   GET_PROFILE_REQUEST,
   GET_PROFILE_SUCCESS,
 } from "../constants/authConstants";
-const baseUrl = "http://localhost:5000/";
+const baseUrl = "http://localhost:5000";
 
 export const googleAuthActions = (credential, nav) => async (dispatch) => {
   try {
     dispatch({ type: GET_GOOGLE_AUTH_REQUEST });
     const response = await axios.post(
-      `${baseUrl}auth/google/verify`,
+      `${baseUrl}/auth/google/verify`,
       credential
     );
 
@@ -39,7 +39,7 @@ export const googleAuthActions = (credential, nav) => async (dispatch) => {
 export const getProfileActions = () => async (dispatch) => {
   try {
     dispatch({ type: GET_PROFILE_REQUEST });
-    const getToken = JSON.stringify(localStorage.getItem("userInfo"));
+    const getToken = JSON.parse(localStorage.getItem("userInfo"));
     const token = getToken ? getToken.token : null;
     const config = token
       ? {

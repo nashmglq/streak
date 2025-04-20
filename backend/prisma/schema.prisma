@@ -8,21 +8,26 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  name  String @db.VarChar(60)
-  email String @unique @db.VarChar(60)
-  googleId String @unique @db.VarChar(255)
-  streak Streak[]
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(60)
+  email      String   @unique @db.VarChar(60)
+  googleId   String   @unique @db.VarChar(255)
+  profilePic String?
+  streak     Streak[]
+
   @@map("user")
 }
 
-
-model Streak{
+model Streak {
   // name TypeData saveAsWhatData
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(999)
-  days Int @db.Integer
-  userId Int 
-  user User @relation(fields: [userId], references: [id])
+  streakId             Int      @id @default(autoincrement())
+  streakName           String   @db.VarChar(999)
+  currentStreak  Int      @default(0) @db.Integer
+  highestStreak  Int      @db.Integer
+  lastActionTime DateTime
+  streakStarted  DateTime
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+
   @@map("streak")
 }

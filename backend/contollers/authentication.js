@@ -18,7 +18,7 @@ const verifyGoogleToken = async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-    const { sub: googleId, email, name } = payload;
+    const { sub: googleId, email, name, picture: profilePic } = payload;
 
     if (!email) return res.status(400).json({ error: "Email is not provided" });
 
@@ -31,6 +31,7 @@ const verifyGoogleToken = async (req, res) => {
           name,
           email,
           googleId, // Or pede din si sub
+          profilePic
         },
       });
     }
@@ -45,9 +46,9 @@ const verifyGoogleToken = async (req, res) => {
       }
     );
 
-    if (user) return res.status(200).json({ success: token });
+    if (user) return res.status(200).json({ success: { token: token } });
 
-    return res.status(200).json({ success: token });
+    return res.status(200).json({ success: { token: token } });
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({ error: err.message });
@@ -60,7 +61,9 @@ const getProfile = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { id } });
 
-    return res.status(200).json({ success: [user.email, user.id, user.name] });
+    return res
+      .status(200)
+      .json({ success: [{ email: user.email, id: user.id, name: user.name, picture: user.profilePic }] });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
