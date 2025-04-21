@@ -25,7 +25,7 @@ const verifyGoogleToken = async (req, res) => {
     let user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      // update the user variable
+      // update the user variable, so that we can re use it if user already exist
       user = await prisma.user.create({
         data: {
           name,
@@ -42,7 +42,7 @@ const verifyGoogleToken = async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "8h",
       }
     );
 

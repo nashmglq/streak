@@ -20,14 +20,15 @@ model User {
 
 model Streak {
   // name TypeData saveAsWhatData
-  streakId             Int      @id @default(autoincrement())
-  streakName           String   @db.VarChar(999)
+  streakId       Int      @id @default(autoincrement())
+  streakName     String   @db.VarChar(999)
   currentStreak  Int      @default(0) @db.Integer
   highestStreak  Int      @db.Integer
   lastActionTime DateTime
   streakStarted  DateTime
+  goal           String   @db.VarChar(999)
   userId         Int
-  user           User     @relation(fields: [userId], references: [id])
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("streak")
 }
