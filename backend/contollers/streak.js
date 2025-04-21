@@ -47,4 +47,30 @@ const getStreak = async (req, res) => {
   }
 };
 
-module.exports = { postStreak, getStreak };
+const getDetailViewStreak = async(req,res) =>{
+  try{
+    // error becuase this is not an integer
+    const {streakId} = req.params
+
+
+    if(!streakId) return res.status(400).json({error: "No ID found."})
+
+    const findUser = await prisma.streak.findUnique({where : {streakId: parseInt(streakId)}})
+
+    return res.status(200).json({success: findUser})
+
+  }catch(err){
+    return res.status(500).json({success: err.message})
+
+  }
+}
+
+const postStreakCount = async(req,res) => {
+  try{
+
+  }catch(err){
+    
+  }
+}
+
+module.exports = { postStreak, getStreak, getDetailViewStreak };

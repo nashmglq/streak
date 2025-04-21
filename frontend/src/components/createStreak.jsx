@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postStreakActions } from "../actions/streakActions";
+import { getStreakActions, postStreakActions } from "../actions/streakActions";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
+
+
 export const CreateStreak = () => {
   const [isShown, setIsShown] = useState(false);
   const [streakName, setStreakName] = useState("");
@@ -10,6 +13,18 @@ export const CreateStreak = () => {
   const { loading, success, error, message } = useSelector(
     (state) => state.postStreak
   );
+
+  useEffect(() => {
+    if (success) {
+      toast.success("Streak created successfully!");
+      setIsShown(false);
+      setStreakName("");
+      setGoal("");
+      dispatch(getStreakActions());
+    }  else if (error) {
+      toast.error(message);
+    }
+  }, [success, error, message, dispatch]); // if any of this change, do this again
 
   const postStreakHandler = (e) => {
     e.preventDefault();
@@ -28,10 +43,21 @@ export const CreateStreak = () => {
 
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <form className="fixed bottom-10 right-10">
         <button
           onClick={showHandler}
-          className="rounded-full border-4 bg-yellow-200 h-20 w-20 text-2xl hover:bg-yellow-300 transition-all duration-300 hover:scale-110"
+          className="rounded-full border-4 bg-white-200 h-20 w-20 text-2xl hover:bg-yellow-200 transition-all duration-300 hover:scale-110"
         >
           ➕
         </button>
@@ -67,21 +93,29 @@ export const CreateStreak = () => {
                 Add your streak
               </h1>
               <form onSubmit={postStreakHandler}>
-                <label className="flex w-full my-2 text-neutral-800">⚡ Name of Streak ⚡</label>
+                <label className="flex w-full my-2 text-neutral-800">
+                  ⚡ Name of Streak ⚡
+                </label>
                 <input
                   className="border-2 rounded-lg w-80 p-4 my-2 border-neutral-400focus:border-yellow-400 focus:ring focus:ring-yellow-200 focus:ring-opacity-50 "
                   placeholder="Enter your streak name..."
+                  value={streakName}
                   onChange={(e) => setStreakName(e.target.value)}
                 />
-                <label className="flex w-full my-2 text-neutral-800"> 🎯 Goal of Streak 🎯</label>
+                <label className="flex w-full my-2 text-neutral-800">
+                  {" "}
+                  🎯 Goal of Streak 🎯
+                </label>
                 <input
                   className="border-2 rounded-lg w-80 p-4 border-neutral-400focus:border-yellow-400 focus:ring focus:ring-yellow-200 focus:ring-opacity-50 "
                   placeholder="Goal for this streak..."
+                  value={goal}
                   onChange={(e) => setGoal(e.target.value)}
                 />
                 <br />
                 <button
-                  className="my-2 p-2 w-60 bg-yellow-200 rounded-lg font-bold text-neutral-600 transition-all duration-300 hover:bg-yellow-300 "
+                  className="my-2 p-2 w-60 bg-yellow-200 rounded-lg font-bold text-neutral-600 transition-all duration-300 hover:bg-yellow-300"
+                  disabled={loading}
                 >
                   Start your Streak{" "}
                 </button>
