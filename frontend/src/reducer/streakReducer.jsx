@@ -1,5 +1,8 @@
 import { act } from "react";
 import {
+  GET_DETAIL_STREAK_FAIL,
+  GET_DETAIL_STREAK_REQUEST,
+  GET_DETAIL_STREAK_SUCCESS,
   GET_STREAK_FAIL,
   GET_STREAK_REQUEST,
   GET_STREAK_SUCCESS,
@@ -50,6 +53,30 @@ export const getStreakReducer = (state = initialState, actions) => {
         message: actions.payload,
       };
     case GET_STREAK_FAIL:
+      return {
+        loading: false,
+        success: false,
+        error: true,
+        message: actions.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+
+export const getDetailStreakReducer = (state = initialState, actions) => {
+  switch (actions.type) {
+    case GET_DETAIL_STREAK_REQUEST:
+      return { loading: true, success: false, error: false, message: [] };
+    case GET_DETAIL_STREAK_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        error: false,
+        message: actions.payload,
+      };
+    case GET_DETAIL_STREAK_FAIL:
       return {
         loading: false,
         success: false,

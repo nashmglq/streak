@@ -42,7 +42,7 @@ const verifyGoogleToken = async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "8h",
+        expiresIn: "24h",
       }
     );
 

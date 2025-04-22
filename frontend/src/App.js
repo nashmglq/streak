@@ -5,6 +5,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Dashboard } from "./screen/dashboard";
 import { ProtectedRouting } from "./utils/protectedRoutes";
 import { Profile } from "./screen/profile";
+import { DetailStreak } from "./screen/detailStreak";
 function App() {
   const clientId = process.env.REACT_APP_CLIENT_ID;
 
@@ -29,6 +30,14 @@ function App() {
               element={
                 <ProtectedRouting>
                   <Profile />
+                </ProtectedRouting>
+              }
+            ></Route>
+            <Route
+              path="/streak/:id"
+              element={
+                <ProtectedRouting>
+                  <DetailStreak />
                 </ProtectedRouting>
               }
             ></Route>

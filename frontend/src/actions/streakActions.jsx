@@ -1,5 +1,8 @@
 import axios from "axios";
 import {
+  GET_DETAIL_STREAK_FAIL,
+  GET_DETAIL_STREAK_REQUEST,
+  GET_DETAIL_STREAK_SUCCESS,
   GET_STREAK_FAIL,
   GET_STREAK_REQUEST,
   GET_STREAK_SUCCESS,
@@ -52,7 +55,7 @@ export const getStreakActions = () => async (dispatch) => {
     dispatch({ type: GET_STREAK_REQUEST });
 
     const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(getToken)
+    console.log(getToken);
     const token = getToken ? getToken.token : null;
     const config = token
       ? {
@@ -62,7 +65,6 @@ export const getStreakActions = () => async (dispatch) => {
           },
         }
       : null;
-   
 
     const response = await axios.get(`${baseUrl}/streak-get`, config);
 
@@ -75,6 +77,44 @@ export const getStreakActions = () => async (dispatch) => {
   } catch (err) {
     return dispatch({
       type: GET_STREAK_FAIL,
+      payload:
+        err.response && err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong.",
+    });
+  }
+};
+
+export const getDetailStreakActions = (streakId) => async (dispatch) => {
+  try {
+    dispatch({ type: GET_DETAIL_STREAK_REQUEST });
+    const getToken = JSON.parse(localStorage.getItem("userInfo"));
+    console.log(getToken);
+    const token = getToken ? getToken.token : null;
+    const config = token
+      ? {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : null;
+
+        console.log(streakId)
+    const response = await axios.get(
+      `${baseUrl}/streak-get/${streakId}`,
+      config
+    );
+
+    if (response.data && response.data.success) {
+      dispatch({
+        type: GET_DETAIL_STREAK_SUCCESS,
+        payload: response.data.success,
+      });
+    }
+  } catch (err) {
+    return dispatch({
+      type: GET_DETAIL_STREAK_FAIL,
       payload:
         err.response && err.response.data.error
           ? err.response.data.error
