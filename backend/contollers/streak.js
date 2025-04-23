@@ -15,7 +15,6 @@ const postStreak = async (req, res) => {
     const nextMidnightDate = new Date();
     nextMidnightDate.setDate(nextMidnightDate.getUTCDate() + 1);
     nextMidnightDate.setUTCHours(0, 0, 0, 0);
-    console.log(new Date(today), new Date(nextMidnightDate));
 
     if (!findUser) {
       await prisma.streak.create({
@@ -28,8 +27,8 @@ const postStreak = async (req, res) => {
           lastActionTime: new Date(),
           streakStarted: new Date(),
           //wrap to be considered time
-          endOfTime: new Date(today),
-          coolDownTimer: new Date(nextMidnightDate),
+          endOfTime: new Date(nextMidnightDate),
+          coolDownTimer: new Date(today),
           coolDown: false,
         },
       });
@@ -103,7 +102,7 @@ const addStreakCount = async (req, res) => {
     nextMidnightDate.setUTCHours(0, 0, 0, 0);
 
     const fetchStreak = await prisma.streak.findUnique({
-      where: { streakId },
+      where: { streakId : parseInt(streakId) },
     });
 
     // Error date because of template literals
@@ -119,7 +118,7 @@ const addStreakCount = async (req, res) => {
     }
 
     const updateStreakCount = await prisma.streak.update({
-      where: { streakId },
+      where: { streakId : parseInt(streakId) },
       data: {
         currentStreak: fetchStreak.currentStreak + 1,
         highestStreak: highStreak + 1,

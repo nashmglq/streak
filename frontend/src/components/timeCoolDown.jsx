@@ -1,0 +1,50 @@
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getDetailStreakActions } from "../actions/streakActions";
+
+export const TimeCoolDown = ({ time, id }) => {
+  const [calculate, setCalculate] = useState(0);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const calcu = () => {
+      const currentLocalTime = new Date(); // PH time
+      const utcOffsetMinutes = 8 * 60; // PH is UTC+8, so this is 480 minutes (8 hr * 60 mins)
+      const incorrectPHTime = new Date(
+        currentLocalTime.getTime() + utcOffsetMinutes * 60 * 1000
+      ); // (utcOffsetMinutes * 60 * 1000) to get ms
+      // whole date - ms
+      const diff = new Date(time) - incorrectPHTime;
+      setCalculate(diff);
+    };
+    calcu();
+    const intervalId = setInterval(calcu, 1000);
+    const clearOldTimer = () => {
+      clearInterval(intervalId);
+    };
+    return clearOldTimer;
+  }, [time]);
+
+  const hours = Math.floor((calculate / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((calculate / (1000 * 60)) % 60);
+  const seconds = Math.floor((calculate / 1000) % 60);
+
+  useEffect(() => {
+    if (hours == 0 && minutes == 0 && seconds == 0)
+      dispatch(getDetailStreakActions(id));
+  }, [dispatch, calculate, id]);
+
+  return (
+    <div>
+      {hours == 0 && minutes == 0 && seconds == 0 ? (
+        "⚡Streak⚡"
+      ) : (
+        <p className="text-xl">
+          {`${hours >= 10 ? hours : `0${hours}`} : ${
+            minutes >= 10 ? minutes : `0${minutes}`
+          } : ${seconds >= 10 ? seconds : `0${seconds}`}`}
+        </p>
+      )}
+    </div>
+  );
+};
