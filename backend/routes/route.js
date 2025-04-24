@@ -6,7 +6,7 @@ const {
   getProfile,
 } = require("../contollers/authentication");
 const {authCheck} = require("../middleware/middleware");
-const { postStreak, getStreak, getDetailViewStreak, addStreakCount } = require("../contollers/streak");
+const { postStreak, getStreak, getDetailViewStreak, addStreakCount, AIresponse } = require("../contollers/streak");
 
 route.post("/auth/google/verify", verifyGoogleToken);
 route.get("/profile", authCheck, getProfile)
@@ -14,5 +14,6 @@ route.post("/streak-post", authCheck, postStreak)
 route.get("/streak-get", authCheck, getStreak)
 route.get("/streak-get/:streakId", authCheck, getDetailViewStreak)
 route.post("/streak-add-count", authCheck, addStreakCount)
+route.get("/streak-get-ai/:streakId", authCheck, AIresponse)
 
 module.exports = route;

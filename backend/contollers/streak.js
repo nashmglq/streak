@@ -1,5 +1,8 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const postStreak = async (req, res) => {
   try {
@@ -102,7 +105,7 @@ const addStreakCount = async (req, res) => {
     nextMidnightDate.setUTCHours(0, 0, 0, 0);
 
     const fetchStreak = await prisma.streak.findUnique({
-      where: { streakId : parseInt(streakId) },
+      where: { streakId: parseInt(streakId) },
     });
 
     // Error date because of template literals
@@ -118,7 +121,7 @@ const addStreakCount = async (req, res) => {
     }
 
     const updateStreakCount = await prisma.streak.update({
-      where: { streakId : parseInt(streakId) },
+      where: { streakId: parseInt(streakId) },
       data: {
         currentStreak: fetchStreak.currentStreak + 1,
         highestStreak: highStreak + 1,
@@ -135,10 +138,58 @@ const addStreakCount = async (req, res) => {
   }
 };
 
+const AIresponse = async (req, res) => {
+  try {
+    const { streakId } = req.params;
+
+    const getData = await prisma.streak.findUnique({
+      where: { streakId: parseInt(streakId) },
+      include: {
+        user: {
+          select:{
+            name: true
+          }
+        }
+      }
+    });
+
+    const prompt = `You are a motivational coach and health progress indicator. Your task is to respond based on the user's goal, the title of their streak, and the number of streak days.
+
+    Provide the following in your response:
+    1. If the current streak is 0, encourage the user to start and take the first step.
+    2. If the streak is ongoing, motivate based on their current streak.
+    3. Mention possible improvements based on the streak duration.
+    4. Encourage them to beat or maintain their highest streak.
+    5. Keep it short, casual, and natural. Do not include section titles like "Motivation", "Insights", etc.
+    
+    User Data:
+    - Goal: ${getData.goal}
+    - Streak Title: ${getData.streakName}
+    - Current Streak: ${getData.currentStreak} days
+    - Highest Streak: ${getData.highestStreak} days
+    - Name of the user: ${getData.user.name} (only use their first name, not surname)`;
+    
+    // if 0 provide
+    // ngayon greater than 0 check nalng if disable or enable, para if disable dun nalang mag send bago
+    if(getData.currentStreak == 0 || getData.coolDown){
+      const result = await model.generateContent(prompt);
+      const saveAIresponse = await prisma.aiResponse.create({data:{
+        response: result.response.text(),
+        streakId : getData.streakId
+      }})
+
+      return res.status(200).json({ success: result.response.text() });
+    }
+
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 
 module.exports = {
   postStreak,
   getStreak,
   getDetailViewStreak,
   addStreakCount,
+  AIresponse
 };

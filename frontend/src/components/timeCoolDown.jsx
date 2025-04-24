@@ -16,23 +16,20 @@ export const TimeCoolDown = ({ time, id }) => {
       // whole date - ms
       const diff = new Date(time) - incorrectPHTime;
       setCalculate(diff);
+    
     };
     calcu();
     const intervalId = setInterval(calcu, 1000);
     const clearOldTimer = () => {
       clearInterval(intervalId);
     };
+
     return clearOldTimer;
   }, [time]);
 
   const hours = Math.floor((calculate / (1000 * 60 * 60)) % 24);
   const minutes = Math.floor((calculate / (1000 * 60)) % 60);
   const seconds = Math.floor((calculate / 1000) % 60);
-
-  useEffect(() => {
-    if (hours == 0 && minutes == 0 && seconds == 0)
-      dispatch(getDetailStreakActions(id));
-  }, [dispatch, calculate, id]);
 
   return (
     <div>
