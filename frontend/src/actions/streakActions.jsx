@@ -110,6 +110,7 @@ export const getDetailStreakActions = (streakId) => async (dispatch) => {
     );
 
     if (response.data && response.data.success) {
+      console.log(response.data.success)
       dispatch({
         type: GET_DETAIL_STREAK_SUCCESS,
         payload: response.data.success,

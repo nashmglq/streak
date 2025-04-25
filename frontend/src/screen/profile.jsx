@@ -14,7 +14,7 @@ export const Profile = () => {
   return (
     <div className="container mx-auto py-20 w-full md:w-1/2 ">
       
-      {message
+      {message && Array.isArray(message)
         ? message.map((info) => (
             <div
               key={info.id}

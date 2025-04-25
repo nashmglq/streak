@@ -15,7 +15,7 @@ export const CreateStreak = () => {
   );
 
   useEffect(() => {
-    if (success) {
+    if (message.includes("Successfully created")) {
       toast.success("Streak created successfully!");
       setIsShown(false);
       setStreakName("");
@@ -24,6 +24,11 @@ export const CreateStreak = () => {
     }  else if (error) {
       toast.error(message);
     }
+
+    return () => {
+      toast.dismiss();
+    };
+
   }, [success, error, message, dispatch]); // if any of this change, do this again
 
   const postStreakHandler = (e) => {

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getDetailStreakActions } from "../actions/streakActions";
 
 export const TimeCoolDown = ({ time, id }) => {
   const [calculate, setCalculate] = useState(0);
   const dispatch = useDispatch();
+  const { loading, success, error, message } = useSelector(
+    (state) => state.getDetailStreak
+  );
 
   useEffect(() => {
     const calcu = () => {
@@ -14,9 +17,9 @@ export const TimeCoolDown = ({ time, id }) => {
         currentLocalTime.getTime() + utcOffsetMinutes * 60 * 1000
       ); // (utcOffsetMinutes * 60 * 1000) to get ms
       // whole date - ms
-      const diff = new Date(time) - incorrectPHTime;
+
+      const diff = new Date(message.coolDownTimer) - incorrectPHTime;
       setCalculate(diff);
-    
     };
     calcu();
     const intervalId = setInterval(calcu, 1000);
@@ -25,7 +28,7 @@ export const TimeCoolDown = ({ time, id }) => {
     };
 
     return clearOldTimer;
-  }, [time]);
+  }, [message.coolDownTimer, dispatch]);
 
   const hours = Math.floor((calculate / (1000 * 60 * 60)) % 24);
   const minutes = Math.floor((calculate / (1000 * 60)) % 60);

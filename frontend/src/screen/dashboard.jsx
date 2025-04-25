@@ -11,6 +11,7 @@ export const Dashboard = () => {
   );
   useEffect(() => {
     dispatch(getStreakActions());
+    dispatch({ type: 'RESET_STATE' });
   }, [dispatch]);
 
   return (

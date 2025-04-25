@@ -35,6 +35,7 @@ const postStreak = async (req, res) => {
           coolDown: false,
         },
       });
+
       return res
         .status(200)
         .json({ success: `Successfully created "${streakName}"` });
@@ -68,7 +69,7 @@ const getDetailViewStreak = async (req, res) => {
     const { streakId } = req.params;
     const today = new Date();
     today.setDate(today.getUTCDate());
-    today.setUTCHours(0, 0, 0, 0);
+    const dateOnly = today.toISOString().slice(0, 10);
 
     if (!streakId) return res.status(400).json({ error: "No ID found." });
 
@@ -77,9 +78,11 @@ const getDetailViewStreak = async (req, res) => {
     });
 
     if (!findStreakId) return res.status(400).json({ error: "No ID found." });
+ 
+    const dateOnlyCoolDownTimer = findStreakId.coolDownTimer.toISOString().slice(0, 10);
 
-    if (findStreakId.coolDownTimer == today) {
-      await prisma.streak.update({
+    if (dateOnlyCoolDownTimer == dateOnly) {
+      const somethhing = await prisma.streak.update({
         where: { streakId: parseInt(streakId) },
         data: {
           coolDown: false,
@@ -103,6 +106,9 @@ const addStreakCount = async (req, res) => {
     const nextMidnightDate = new Date();
     nextMidnightDate.setDate(nextMidnightDate.getUTCDate() + 2);
     nextMidnightDate.setUTCHours(0, 0, 0, 0);
+
+    const coolDownTimer = new Date();
+    coolDownTimer.setTime(coolDownTimer.getTime() + 30000);
 
     const fetchStreak = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },

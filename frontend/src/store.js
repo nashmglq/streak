@@ -1,19 +1,34 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import {getProfileReducer, googleAuthReducer} from "./reducer/authReducer";
-import { getDetailStreakReducer, getStreakReducer, postStreakReducer } from "./reducer/streakReducer";
+import { getProfileReducer, googleAuthReducer } from "./reducer/authReducer";
+import {
+  getDetailStreakReducer,
+  getStreakReducer,
+  postStreakReducer,
+} from "./reducer/streakReducer";
 
-const reducer = combineReducers({
-  googleAuth : googleAuthReducer,
-  getProfile : getProfileReducer,
-  postStreak : postStreakReducer,
-  getStreak : getStreakReducer,
-  getDetailStreak : getDetailStreakReducer
+const appReducer = combineReducers({
+  googleAuth: googleAuthReducer,
+  getProfile: getProfileReducer,
+  postStreak: postStreakReducer,
+  getStreak: getStreakReducer,
+  getDetailStreak: getDetailStreakReducer,
 });
+
+//rootReducer resets the entire Redux state by passing 
+// undefined to the combined reducer when the "RESET_STATE" action is dispatched, clearing all state.
+const rootReducer = (state, action) => {
+  if (action.type === "RESET_STATE") {
+    return appReducer(undefined, action);
+  }
+  return appReducer(state, action);
+};
 
 const preloadedState = {};
 const store = configureStore({
-  reducer,
+  reducer: rootReducer,
   preloadedState,
 });
 
 export default store;
+
+
