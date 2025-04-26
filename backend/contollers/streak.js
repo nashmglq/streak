@@ -78,8 +78,10 @@ const getDetailViewStreak = async (req, res) => {
     });
 
     if (!findStreakId) return res.status(400).json({ error: "No ID found." });
- 
-    const dateOnlyCoolDownTimer = findStreakId.coolDownTimer.toISOString().slice(0, 10);
+
+    const dateOnlyCoolDownTimer = findStreakId.coolDownTimer
+      .toISOString()
+      .slice(0, 10);
 
     if (dateOnlyCoolDownTimer == dateOnly) {
       const somethhing = await prisma.streak.update({
@@ -152,11 +154,11 @@ const AIresponse = async (req, res) => {
       where: { streakId: parseInt(streakId) },
       include: {
         user: {
-          select:{
-            name: true
-          }
-        }
-      }
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     const prompt = `You are a motivational coach and health progress indicator. Your task is to respond based on the user's goal, the title of their streak, and the number of streak days.
@@ -174,19 +176,45 @@ const AIresponse = async (req, res) => {
     - Current Streak: ${getData.currentStreak} days
     - Highest Streak: ${getData.highestStreak} days
     - Name of the user: ${getData.user.name} (only use their first name, not surname)`;
-    
+
     // if 0 provide
     // ngayon greater than 0 check nalng if disable or enable, para if disable dun nalang mag send bago
-    if(getData.currentStreak == 0 || getData.coolDown){
+    if (getData.currentStreak == 0 || getData.coolDown) {
       const result = await model.generateContent(prompt);
-      const saveAIresponse = await prisma.aiResponse.create({data:{
-        response: result.response.text(),
-        streakId : getData.streakId
-      }})
+      const saveAIresponse = await prisma.aiResponse.create({
+        data: {
+          response: result.response.text(),
+          streakId: getData.streakId,
+        },
+      });
 
       return res.status(200).json({ success: result.response.text() });
     }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 
+const deleteStreak = async (req, res) => {
+  try {
+    const { streakId } = req.body;
+    const userId = req.user.id;
+
+    if (!streakId) return res.status(400).json({ error: "No ID found." });
+
+    const findUser = await prisma.streak.findUnique({
+      where: { userId: userId },
+    });
+
+    if (userId == findUser.userId) {
+      const deleteStreak = await prisma.streak.delete({
+        where: { streakId: streakId },
+      });
+
+      return res
+        .status(200)
+        .json({ success: `Successfully deleted id ${streakId}` });
+    }
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -197,5 +225,5 @@ module.exports = {
   getStreak,
   getDetailViewStreak,
   addStreakCount,
-  AIresponse
+  AIresponse,
 };

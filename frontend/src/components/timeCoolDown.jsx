@@ -4,6 +4,7 @@ import { getDetailStreakActions } from "../actions/streakActions";
 
 export const TimeCoolDown = ({ time, id }) => {
   const [calculate, setCalculate] = useState(0);
+  const [run, isRun] = useState(true)
   const dispatch = useDispatch();
   const { loading, success, error, message } = useSelector(
     (state) => state.getDetailStreak
@@ -18,16 +19,27 @@ export const TimeCoolDown = ({ time, id }) => {
       ); // (utcOffsetMinutes * 60 * 1000) to get ms
       // whole date - ms
 
-      const diff = new Date(message.coolDownTimer) - incorrectPHTime;
+      const diff = new Date(time) - incorrectPHTime;
+
+      if(diff == 0){
+        isRun(false)
+      }
       setCalculate(diff);
     };
     calcu();
-    const intervalId = setInterval(calcu, 1000);
-    const clearOldTimer = () => {
-      clearInterval(intervalId);
-    };
 
-    return clearOldTimer;
+
+
+
+    if (run) {
+      const intervalId = setInterval(calcu, 1000);
+      const clearOldTimer = () => {
+        clearInterval(intervalId);
+      };
+      return clearOldTimer;
+    }
+
+
   }, [message.coolDownTimer, dispatch]);
 
   const hours = Math.floor((calculate / (1000 * 60 * 60)) % 24);
