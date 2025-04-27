@@ -7,7 +7,8 @@ import {
   getDetailStreakActions,
 } from "../actions/streakActions";
 import { TimeCoolDown } from "../components/timeCoolDown";
-import { Trophy, Flame } from "lucide-react";
+import { TrophyIcon, FlameIcon, CalendarIcon, ArrowUpIcon } from "lucide-react";
+
 export const DetailStreak = () => {
   const { id } = useParams();
   const streakId = id;
@@ -24,50 +25,69 @@ export const DetailStreak = () => {
 
   useEffect(() => {
     dispatch(getDetailStreakActions(id));
-    console.log(message);
-  }, [dispatch]);
+  }, [dispatch, id]);
+
+  // Calculate days since streak started
+  const calculateDaysSince = (startDate) => {
+    if (!startDate) return 0;
+    const start = new Date(startDate);
+    const today = new Date();
+    const diffTime = Math.abs(today - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
 
   return (
-    <div>
+    <div className="bg-neutral-50 min-h-screen">
       {message ? (
-        <div className="container mx-auto my-auto">
-          <div className="flex justify-center items-center h-screen">
-            <div className="flex flex-col items-center justify-center w-3/4 sm:w-1/4 bg-white shadow-lg h-1/2 sm:h-1/2 rounded-lg border-2">
-              <div className="bg-yellow-50 border-2 border-yellow-100 w-full p-4">
-                {" "}
-                <h1 className="font-bold text-lg">{message.streakName}</h1>{" "}
-                <h1>
-                  Started{" "}
-                  {new Date(message.streakStarted).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </h1>
+        <div className="container mx-auto py-8">
+          <div className="flex justify-center">
+            <div className="w-full max-w-md bg-white shadow-lg rounded-lg border border-neutral-200 overflow-hidden">
+              {/* Header */}
+              <div className="bg-yellow-50 p-6 border-b border-yellow-100">
+                <h1 className="text-2xl font-bold text-neutral-800">{message.streakName}</h1>
+                <p className="text-sm text-neutral-600 mt-1">Started {new Date(message.streakStarted).toLocaleDateString()}</p>
               </div>
-              <div
-                className="flex items-center justify-center text-xl font-bold text-neutral-700 rounded-full border-2 border-yellow-200 w-40 h-40
-              bg-yellow-50 mt-4
-              "
-              >
-                <div className="items-center">
-                  <Flame
-                    className="inline-block mb-1 text-yellow-400"
-                    size={24}
-                  ></Flame>
-                  <div className="text-3xl">{message.currentStreak || "0"}</div>
-                  <div className="text-lg font-thin">
-                    <h1>{message.currentStreak > 1 ? "Days" : "Day"}</h1>
+              
+              {/* Main content */}
+              <div className="p-6 flex flex-col items-center">
+                {/* Current streak counter */}
+                <div className="flex items-center justify-center text-2xl font-bold text-neutral-700 rounded-full border-2 border-yellow-200 w-40 h-40 mb-6 bg-yellow-50">
+                  <div className="text-center">
+                    <FlameIcon className="inline-block mb-1 text-yellow-500" size={24} />
+                    <div className="text-3xl">{message.currentStreak || 0}</div>
+                    <div className="text-sm font-normal">Days</div>
                   </div>
                 </div>
-              </div>
+                
+                {/* Stats row */}
+                <div className="grid grid-cols-2 gap-4 w-full mb-6">
+                  <div className="bg-neutral-50 p-3 rounded-lg text-center shadow-sm">
+                    <div className="text-sm text-neutral-500">Best Streak</div>
+                    <div className="flex justify-center items-center mt-1">
+                      <TrophyIcon className="text-yellow-500 mr-1" size={16} />
+                      <span className="font-bold">{message.highestStreak || 0}</span>
+                    </div>
+                  </div>
+                  <div className="bg-neutral-50 p-3 rounded-lg text-center shadow-sm">
+                    <div className="text-sm text-neutral-500">Total Days</div>
+                    <div className="flex justify-center items-center mt-1">
+                      <CalendarIcon className="text-blue-500 mr-1" size={16} />
+                      <span className="font-bold">{calculateDaysSince(message.streakStarted)}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Goal section */}
+                <div className="w-full mb-6 bg-neutral-50 p-4 rounded-lg">
+                  <h3 className="text-sm uppercase text-neutral-500 font-medium mb-2">My Goal</h3>
+                  <p className="text-neutral-700 text-sm">{message.goal}</p>
+                </div>
 
-              <div className="mb-4">
-                {" "}
+                {/* Action button */}
                 {message.coolDown ? (
                   <button
-                    onClick={addStreakButton}
-                    className="mt-8 p-4 rounded-lg w-full sm:w-autoshadow-lg bg-neutral-400 cursor-not-allowed transition-all transform active:translate-x-1 active:-translate-x-1"
+                    className="w-full p-4 rounded-lg shadow-md bg-neutral-300 text-neutral-600 cursor-not-allowed flex items-center justify-center"
                     disabled
                   >
                     <TimeCoolDown time={message.coolDownTimer} id={id} />
@@ -75,19 +95,24 @@ export const DetailStreak = () => {
                 ) : (
                   <button
                     onClick={addStreakButton}
-                    className="mt-8 p-4 rounded-lg shadow-lg bg-yellow-200 font-bold text-neutral-800 transition-all duration-300 hover:scale-110 
-            hover:bg-yellow-300 w-full sm:w-auto
-            "
+                    className="w-full p-4 rounded-lg shadow-md bg-yellow-400 font-bold text-neutral-800 transition-all duration-300 hover:bg-yellow-500 flex items-center justify-center"
                   >
-                    ⚡Streak⚡
+                    <FlameIcon className="mr-2" size={20} />
+                    Add Streak Day
                   </button>
-                )}{" "}
+                )}
               </div>
             </div>
           </div>
         </div>
+      ) : loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+        </div>
       ) : (
-        "Empty streak here ⚡"
+        <div className="flex justify-center items-center h-screen text-neutral-600">
+          Empty streak here ⚡
+        </div>
       )}
     </div>
   );

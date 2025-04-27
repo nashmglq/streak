@@ -3,6 +3,9 @@ import {
   ADD_STREAK_COUNT_FAIL,
   ADD_STREAK_COUNT_REQUEST,
   ADD_STREAK_COUNT_SUCCESS,
+  GET_AI_PROMPT_FAIL,
+  GET_AI_PROMPT_REQUEST,
+  GET_AI_PROMPT_SUCCESS,
   GET_DETAIL_STREAK_FAIL,
   GET_DETAIL_STREAK_REQUEST,
   GET_DETAIL_STREAK_SUCCESS,
@@ -103,14 +106,14 @@ export const getDetailStreakActions = (streakId) => async (dispatch) => {
         }
       : null;
 
-        console.log(streakId)
+    console.log(streakId);
     const response = await axios.get(
       `${baseUrl}/streak-get/${streakId}`,
       config
     );
 
     if (response.data && response.data.success) {
-      console.log(response.data.success)
+      console.log(response.data.success);
       dispatch({
         type: GET_DETAIL_STREAK_SUCCESS,
         payload: response.data.success,
@@ -127,13 +130,10 @@ export const getDetailStreakActions = (streakId) => async (dispatch) => {
   }
 };
 
-
-
-export const addStreakCountActions = (formData) => async(dispatch) => {
-  try{
-
-    dispatch({type: ADD_STREAK_COUNT_REQUEST})
-    const streakId = formData.streakId
+export const addStreakCountActions = (formData) => async (dispatch) => {
+  try {
+    dispatch({ type: ADD_STREAK_COUNT_REQUEST });
+    const streakId = formData.streakId;
     const getToken = JSON.parse(localStorage.getItem("userInfo"));
     const token = getToken ? getToken.token : null;
     const config = token
@@ -145,15 +145,20 @@ export const addStreakCountActions = (formData) => async(dispatch) => {
         }
       : null;
 
-      const response = await axios.post(`${baseUrl}/streak-add-count`, formData, config)
+    const response = await axios.post(
+      `${baseUrl}/streak-add-count`,
+      formData,
+      config
+    );
 
-      if(response.data && response.data.success){
-        dispatch(getDetailStreakActions(streakId))
-        return dispatch({type: ADD_STREAK_COUNT_SUCCESS, payload: response.data.success})
-      }
-    
-
-  }catch(err){
+    if (response.data && response.data.success) {
+      dispatch(getDetailStreakActions(streakId));
+      return dispatch({
+        type: ADD_STREAK_COUNT_SUCCESS,
+        payload: response.data.success,
+      });
+    }
+  } catch (err) {
     return dispatch({
       type: ADD_STREAK_COUNT_FAIL,
       payload:
@@ -162,4 +167,37 @@ export const addStreakCountActions = (formData) => async(dispatch) => {
           : "Something went wrong.",
     });
   }
-}
+};
+
+export const promtAiActions = (streakId) => async (dispatch) => {
+  try {
+    dispatch({ type: GET_AI_PROMPT_REQUEST });
+
+    const getToken = JSON.parse(localStorage.getItem("userInfo"));
+    const token = getToken ? getToken.token : null;
+    const config = token
+      ? {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : null;
+
+    const response = await axios.get(`${baseUrl}/streak-get-ai/${streakId}`, config);
+    if (response.data && response.data.success) {
+      return dispatch({
+        type: GET_AI_PROMPT_SUCCESS,
+        payload: response.data.success,
+      });
+    }
+  } catch (err) {
+    return dispatch({
+      type: GET_AI_PROMPT_FAIL,
+      payload:
+        err.response && err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong.",
+    });
+  }
+};

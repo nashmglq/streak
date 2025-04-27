@@ -33,6 +33,7 @@ const postStreak = async (req, res) => {
           endOfTime: new Date(nextMidnightDate),
           coolDownTimer: new Date(today),
           coolDown: false,
+          aiPrompt: false,
         },
       });
 
@@ -83,7 +84,8 @@ const getDetailViewStreak = async (req, res) => {
       .toISOString()
       .slice(0, 10);
 
-    if (dateOnlyCoolDownTimer == dateOnly) {
+    if (dateOnlyCoolDownTimer <= dateOnly) {
+      // this is the problem of the frontend
       const somethhing = await prisma.streak.update({
         where: { streakId: parseInt(streakId) },
         data: {
@@ -138,6 +140,7 @@ const addStreakCount = async (req, res) => {
         endOfTime: new Date(nextMidnightDate),
         coolDown: true,
         coolDownTimer: new Date(today),
+        aiPrompt: true,
       },
     });
     return res.status(200).json({ success: updateStreakCount });
@@ -177,19 +180,25 @@ const AIresponse = async (req, res) => {
     - Highest Streak: ${getData.highestStreak} days
     - Name of the user: ${getData.user.name} (only use their first name, not surname)`;
 
-    // if 0 provide
-    // ngayon greater than 0 check nalng if disable or enable, para if disable dun nalang mag send bago
-    if (getData.currentStreak == 0 || getData.coolDown) {
+    if (getData.currentStreak == 0 || (getData.coolDown && getData.aiPrompt)) {
       const result = await model.generateContent(prompt);
-      const saveAIresponse = await prisma.aiResponse.create({
+      await prisma.aiResponse.create({
         data: {
           response: result.response.text(),
           streakId: getData.streakId,
         },
       });
 
+      await prisma.streak.update({
+        where: { streakId: parseInt(streakId) },
+        data: {
+          aiPrompt: false,
+        },
+      });
       return res.status(200).json({ success: result.response.text() });
     }
+
+    return res.status(500).json({ erorr: "Prompt already existed for today." });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -226,4 +235,5 @@ module.exports = {
   getDetailViewStreak,
   addStreakCount,
   AIresponse,
+  deleteStreak
 };

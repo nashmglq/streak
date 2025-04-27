@@ -4,6 +4,7 @@ import {
   getDetailStreakReducer,
   getStreakReducer,
   postStreakReducer,
+  promtAiReducer,
 } from "./reducer/streakReducer";
 
 const appReducer = combineReducers({
@@ -12,6 +13,7 @@ const appReducer = combineReducers({
   postStreak: postStreakReducer,
   getStreak: getStreakReducer,
   getDetailStreak: getDetailStreakReducer,
+  promtAi: promtAiReducer
 });
 
 //rootReducer resets the entire Redux state by passing 

@@ -29,6 +29,7 @@ model Streak {
   endOfTime      DateTime
   coolDownTimer  DateTime
   coolDown       Boolean      @default(false)
+  aiPrompt       Boolean      @default(false)
   goal           String       @db.VarChar(999)
   userId         Int
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)

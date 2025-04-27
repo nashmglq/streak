@@ -20,9 +20,10 @@ export const TimeCoolDown = ({ time, id }) => {
       // whole date - ms
 
       const diff = new Date(time) - incorrectPHTime;
-
-      if(diff == 0){
+      
+      if(diff <= 0){
         isRun(false)
+        dispatch(getDetailStreakActions(id))
       }
       setCalculate(diff);
     };

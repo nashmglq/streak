@@ -1,8 +1,10 @@
-import { act } from "react";
 import {
   ADD_STREAK_COUNT_FAIL,
   ADD_STREAK_COUNT_REQUEST,
   ADD_STREAK_COUNT_SUCCESS,
+  GET_AI_PROMPT_FAIL,
+  GET_AI_PROMPT_REQUEST,
+  GET_AI_PROMPT_SUCCESS,
   GET_DETAIL_STREAK_FAIL,
   GET_DETAIL_STREAK_REQUEST,
   GET_DETAIL_STREAK_SUCCESS,
@@ -67,7 +69,6 @@ export const getStreakReducer = (state = initialState, actions) => {
   }
 };
 
-
 export const getDetailStreakReducer = (state = initialState, actions) => {
   switch (actions.type) {
     case GET_DETAIL_STREAK_REQUEST:
@@ -103,6 +104,29 @@ export const addStreakCountReducer = (state = initialState, actions) => {
         message: actions.payload,
       };
     case ADD_STREAK_COUNT_FAIL:
+      return {
+        loading: false,
+        success: false,
+        error: true,
+        message: actions.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const promtAiReducer = (state = initialState, actions) => {
+  switch (actions.type) {
+    case GET_AI_PROMPT_REQUEST:
+      return { loading: true, success: false, error: false, message: [] };
+    case GET_AI_PROMPT_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        error: false,
+        message: actions.payload,
+      };
+    case GET_AI_PROMPT_FAIL:
       return {
         loading: false,
         success: false,
