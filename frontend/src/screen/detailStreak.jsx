@@ -8,6 +8,7 @@ import {
 } from "../actions/streakActions";
 import { TimeCoolDown } from "../components/timeCoolDown";
 import { TrophyIcon, FlameIcon, CalendarIcon, ArrowUpIcon } from "lucide-react";
+import { AiResponse } from "../components/aiResponse";
 
 export const DetailStreak = () => {
   const { id } = useParams();
@@ -39,6 +40,7 @@ export const DetailStreak = () => {
 
   return (
     <div className="bg-neutral-50 min-h-screen">
+      <AiResponse/>
       {message ? (
         <div className="container mx-auto py-8">
           <div className="flex justify-center">
