@@ -61,7 +61,6 @@ export const getStreakActions = () => async (dispatch) => {
     dispatch({ type: GET_STREAK_REQUEST });
 
     const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(getToken);
     const token = getToken ? getToken.token : null;
     const config = token
       ? {
@@ -95,7 +94,6 @@ export const getDetailStreakActions = (streakId) => async (dispatch) => {
   try {
     dispatch({ type: GET_DETAIL_STREAK_REQUEST });
     const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(getToken);
     const token = getToken ? getToken.token : null;
     const config = token
       ? {
@@ -106,14 +104,12 @@ export const getDetailStreakActions = (streakId) => async (dispatch) => {
         }
       : null;
 
-    console.log(streakId);
     const response = await axios.get(
       `${baseUrl}/streak-get/${streakId}`,
       config
     );
 
     if (response.data && response.data.success) {
-      console.log(response.data.success);
       dispatch({
         type: GET_DETAIL_STREAK_SUCCESS,
         payload: response.data.success,
@@ -172,7 +168,6 @@ export const addStreakCountActions = (formData) => async (dispatch) => {
 export const promtAiActions = (streakId) => async (dispatch) => {
   try {
     dispatch({ type: GET_AI_PROMPT_REQUEST });
-
     const getToken = JSON.parse(localStorage.getItem("userInfo"));
     const token = getToken ? getToken.token : null;
     const config = token
@@ -184,7 +179,11 @@ export const promtAiActions = (streakId) => async (dispatch) => {
         }
       : null;
 
-    const response = await axios.get(`${baseUrl}/streak-get-ai/${streakId}`, config);
+
+    const response = await axios.get(
+      `${baseUrl}/streak-get-ai/${streakId}`,
+      config
+    );
     if (response.data && response.data.success) {
       return dispatch({
         type: GET_AI_PROMPT_SUCCESS,
@@ -197,7 +196,7 @@ export const promtAiActions = (streakId) => async (dispatch) => {
       payload:
         err.response && err.response.data.error
           ? err.response.data.error
-          : "Something went wrong.",
+          : "Something went wrong."
     });
   }
 };

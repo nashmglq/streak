@@ -1,45 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Menu, X } from "lucide-react";
 
 export const SideBar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
   };
 
   return (
-    <div>
-      <aside class="fixed top-0 left-0 z-40 w-10 h-screen transition-transform -translate-x-full sm:translate-x-0">
-        <div class="h-full px-2 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-          <ul class="space-y-2 font-medium">
+    <>
+
+      <button 
+        onClick={toggleSidebar} 
+        className="fixed top-1 left-4 z-50 block sm:hidden text-neutral-400 p-2 rounded-md"
+        aria-label="Toggle sidebar"
+      >
+        {isOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      <aside className={`fixed top-0 left-0 z-40 w-16 h-screen transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} sm:translate-x-0 bg-gray-50 dark:bg-gray-800`}>
+        <div className="h-full px-3 py-8 overflow-y-auto">
+          <ul className="space-y-6 font-medium">
             <li>
               <Link
                 to="/dashboard"
-                class="text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 m-2"
+                className="flex justify-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 p-2"
               >
-                <img src = "icon.png"/>
+                <img src="icon.png" alt="Dashboard" className="w-6 h-6" />
               </Link>
             </li>
             <li>
               <Link
                 to="/profile"
-                class="text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 m-2"
+                className="flex justify-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 p-2"
               >
-                <User/>
+                <User size={24} />
               </Link>
             </li>
             <li>
               <Link
                 to="/"
-                class="text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 m-2"
+                className="flex justify-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 p-2"
                 onClick={logoutHandler}
               >
-               <LogOut/>
+                <LogOut size={24} />
               </Link>
             </li>
           </ul>
         </div>
       </aside>
-    </div>
+    </>
   );
 };

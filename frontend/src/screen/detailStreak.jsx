@@ -40,49 +40,61 @@ export const DetailStreak = () => {
 
   return (
     <div className="bg-neutral-50 min-h-screen">
-      <AiResponse/>
       {message ? (
         <div className="container mx-auto py-8">
           <div className="flex justify-center">
             <div className="w-full max-w-md bg-white shadow-lg rounded-lg border border-neutral-200 overflow-hidden">
               {/* Header */}
               <div className="bg-yellow-50 p-6 border-b border-yellow-100">
-                <h1 className="text-2xl font-bold text-neutral-800">{message.streakName}</h1>
-                <p className="text-sm text-neutral-600 mt-1">Started {new Date(message.streakStarted).toLocaleDateString()}</p>
+                <h1 className="text-2xl font-bold text-neutral-800">
+                  {message.streakName}
+                </h1>
+                <p className="text-sm text-neutral-600 mt-1">
+                  Started {new Date(message.streakStarted).toLocaleDateString()}
+                </p>
               </div>
-              
+
               {/* Main content */}
               <div className="p-6 flex flex-col items-center">
                 {/* Current streak counter */}
                 <div className="flex items-center justify-center text-2xl font-bold text-neutral-700 rounded-full border-2 border-yellow-200 w-40 h-40 mb-6 bg-yellow-50">
                   <div className="text-center">
-                    <FlameIcon className="inline-block mb-1 text-yellow-500" size={24} />
+                    <FlameIcon
+                      className="inline-block mb-1 text-yellow-500"
+                      size={24}
+                    />
                     <div className="text-3xl">{message.currentStreak || 0}</div>
                     <div className="text-sm font-normal">Days</div>
                   </div>
                 </div>
-                
+
                 {/* Stats row */}
                 <div className="grid grid-cols-2 gap-4 w-full mb-6">
                   <div className="bg-neutral-50 p-3 rounded-lg text-center shadow-sm">
                     <div className="text-sm text-neutral-500">Best Streak</div>
                     <div className="flex justify-center items-center mt-1">
                       <TrophyIcon className="text-yellow-500 mr-1" size={16} />
-                      <span className="font-bold">{message.highestStreak || 0}</span>
+                      <span className="font-bold">
+                        {message.highestStreak || 0}
+                      </span>
                     </div>
                   </div>
                   <div className="bg-neutral-50 p-3 rounded-lg text-center shadow-sm">
                     <div className="text-sm text-neutral-500">Total Days</div>
                     <div className="flex justify-center items-center mt-1">
                       <CalendarIcon className="text-blue-500 mr-1" size={16} />
-                      <span className="font-bold">{calculateDaysSince(message.streakStarted)}</span>
+                      <span className="font-bold">
+                        {calculateDaysSince(message.streakStarted)}
+                      </span>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Goal section */}
                 <div className="w-full mb-6 bg-neutral-50 p-4 rounded-lg">
-                  <h3 className="text-sm uppercase text-neutral-500 font-medium mb-2">My Goal</h3>
+                  <h3 className="text-sm uppercase text-neutral-500 font-medium mb-2">
+                    My Goal
+                  </h3>
                   <p className="text-neutral-700 text-sm">{message.goal}</p>
                 </div>
 
@@ -104,6 +116,7 @@ export const DetailStreak = () => {
                   </button>
                 )}
               </div>
+              <AiResponse streakId={id} />
             </div>
           </div>
         </div>

@@ -33,7 +33,7 @@ const postStreak = async (req, res) => {
           endOfTime: new Date(nextMidnightDate),
           coolDownTimer: new Date(today),
           coolDown: false,
-          aiPrompt: false,
+          aiPrompt: true,
         },
       });
 
@@ -84,12 +84,24 @@ const getDetailViewStreak = async (req, res) => {
       .toISOString()
       .slice(0, 10);
 
+    const endOfStreak = findStreakId.endOfTime
+    .toISOString()
+    .slice(0, 10);
+
     if (dateOnlyCoolDownTimer <= dateOnly) {
-      // this is the problem of the frontend
-      const somethhing = await prisma.streak.update({
+      await prisma.streak.update({
         where: { streakId: parseInt(streakId) },
         data: {
           coolDown: false,
+        },
+      });
+    }
+
+    if (endOfStreak <= dateOnly) {
+      await prisma.streak.update({
+        where: { streakId: parseInt(streakId) },
+        data: {
+          currentStreak: 0,
         },
       });
     }
@@ -180,7 +192,7 @@ const AIresponse = async (req, res) => {
     - Highest Streak: ${getData.highestStreak} days
     - Name of the user: ${getData.user.name} (only use their first name, not surname)`;
 
-    if (getData.currentStreak == 0 || (getData.coolDown && getData.aiPrompt)) {
+    if ((getData.currentStreak == 0 && getData.aiPrompt) || (getData.coolDown && getData.aiPrompt)) {
       const result = await model.generateContent(prompt);
       await prisma.aiResponse.create({
         data: {
@@ -195,10 +207,11 @@ const AIresponse = async (req, res) => {
           aiPrompt: false,
         },
       });
-      return res.status(200).json({ success: result.response.text() });
     }
+    const getAllAiResponse = await prisma.aiResponse.findMany({where: {streakId: parseInt(streakId)}})
+    return res.status(200).json({ success: getAllAiResponse });
 
-    return res.status(500).json({ erorr: "Prompt already existed for today." });
+
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
