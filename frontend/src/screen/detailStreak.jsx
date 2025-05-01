@@ -28,7 +28,7 @@ export const DetailStreak = () => {
     dispatch(getDetailStreakActions(id));
   }, [dispatch, id]);
 
-  // Calculate days since streak started
+
   const calculateDaysSince = (startDate) => {
     if (!startDate) return 0;
     const start = new Date(startDate);
@@ -69,22 +69,13 @@ export const DetailStreak = () => {
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-2 gap-4 w-full mb-6">
+                <div className="grid grid-cols-1 gap-1 w-full mb-6">
                   <div className="bg-neutral-50 p-3 rounded-lg text-center shadow-sm">
                     <div className="text-sm text-neutral-500">Best Streak</div>
                     <div className="flex justify-center items-center mt-1">
                       <TrophyIcon className="text-yellow-500 mr-1" size={16} />
                       <span className="font-bold">
                         {message.highestStreak || 0}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="bg-neutral-50 p-3 rounded-lg text-center shadow-sm">
-                    <div className="text-sm text-neutral-500">Total Days</div>
-                    <div className="flex justify-center items-center mt-1">
-                      <CalendarIcon className="text-blue-500 mr-1" size={16} />
-                      <span className="font-bold">
-                        {calculateDaysSince(message.streakStarted)}
                       </span>
                     </div>
                   </div>

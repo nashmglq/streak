@@ -3,6 +3,9 @@ import {
   ADD_STREAK_COUNT_FAIL,
   ADD_STREAK_COUNT_REQUEST,
   ADD_STREAK_COUNT_SUCCESS,
+  DELETE_STREAK_FAIL,
+  DELETE_STREAK_REQUEST,
+  DELETE_STREAK_SUCCESS,
   GET_AI_PROMPT_FAIL,
   GET_AI_PROMPT_REQUEST,
   GET_AI_PROMPT_SUCCESS,
@@ -15,6 +18,9 @@ import {
   POST_STREAK_FAIL,
   POST_STREAK_REQUEST,
   POST_STREAK_SUCCESS,
+  UPDATE_STREAK_FAIL,
+  UPDATE_STREAK_REQUEST,
+  UPDATE_STREAK_SUCCESS,
 } from "../constants/streakConstatns";
 const baseUrl = "http://localhost:5000";
 
@@ -179,7 +185,6 @@ export const promtAiActions = (streakId) => async (dispatch) => {
         }
       : null;
 
-
     const response = await axios.get(
       `${baseUrl}/streak-get-ai/${streakId}`,
       config
@@ -196,7 +201,80 @@ export const promtAiActions = (streakId) => async (dispatch) => {
       payload:
         err.response && err.response.data.error
           ? err.response.data.error
-          : "Something went wrong."
+          : "Something went wrong.",
+    });
+  }
+};
+
+export const deleteStreakActions = (formData) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_STREAK_REQUEST });
+    const getToken = JSON.parse(localStorage.getItem("userInfo"));
+    const token = getToken ? getToken.token : null;
+    const config = token
+      ? {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : null;
+
+    const response = await axios.delete(
+      `${baseUrl}/streak-delete`,
+      formData,
+      config
+    );
+
+    if (response.data && response.data.success) {
+      return dispatch({
+        type: DELETE_STREAK_SUCCESS,
+        payload: response.data.success,
+      });
+    }
+  } catch (err) {
+    return dispatch({
+      type: DELETE_STREAK_FAIL,
+      payload:
+        err.response && err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong.",
+    });
+  }
+};
+
+export const updateStreakActions = (formData) => async (dispatch) => {
+  try {
+    dispatch({ type: UPDATE_STREAK_REQUEST });
+    const getToken = JSON.parse(localStorage.getItem("userInfo"));
+    const token = getToken ? getToken.token : null;
+    const config = token
+      ? {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : null;
+    const response = await axios.put(
+      `${baseUrl}/streak-delete`,
+      formData,
+      config
+    );
+
+    if (response.data && response.data.success) {
+      return dispatch({
+        type: UPDATE_STREAK_SUCCESS,
+        payload: response.data.success,
+      });
+    }
+  } catch (err) {
+    return dispatch({
+      type: UPDATE_STREAK_FAIL,
+      payload:
+        err.response && err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong.",
     });
   }
 };

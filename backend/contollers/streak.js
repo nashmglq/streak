@@ -84,9 +84,7 @@ const getDetailViewStreak = async (req, res) => {
       .toISOString()
       .slice(0, 10);
 
-    const endOfStreak = findStreakId.endOfTime
-    .toISOString()
-    .slice(0, 10);
+    const endOfStreak = findStreakId.endOfTime.toISOString().slice(0, 10);
 
     if (dateOnlyCoolDownTimer <= dateOnly) {
       await prisma.streak.update({
@@ -192,7 +190,10 @@ const AIresponse = async (req, res) => {
     - Highest Streak: ${getData.highestStreak} days
     - Name of the user: ${getData.user.name} (only use their first name, not surname)`;
 
-    if ((getData.currentStreak == 0 && getData.aiPrompt) || (getData.coolDown && getData.aiPrompt)) {
+    if (
+      (getData.currentStreak == 0 && getData.aiPrompt) ||
+      (getData.coolDown && getData.aiPrompt)
+    ) {
       const result = await model.generateContent(prompt);
       await prisma.aiResponse.create({
         data: {
@@ -208,10 +209,10 @@ const AIresponse = async (req, res) => {
         },
       });
     }
-    const getAllAiResponse = await prisma.aiResponse.findMany({where: {streakId: parseInt(streakId)}})
+    const getAllAiResponse = await prisma.aiResponse.findMany({
+      where: { streakId: parseInt(streakId) },
+    });
     return res.status(200).json({ success: getAllAiResponse });
-
-
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -225,12 +226,12 @@ const deleteStreak = async (req, res) => {
     if (!streakId) return res.status(400).json({ error: "No ID found." });
 
     const findUser = await prisma.streak.findUnique({
-      where: { userId: userId },
+      where: { streakId: parseInt(streakId) },
     });
 
     if (userId == findUser.userId) {
       const deleteStreak = await prisma.streak.delete({
-        where: { streakId: streakId },
+        where: { streakId: parseInt(streakId) },
       });
 
       return res
@@ -242,11 +243,44 @@ const deleteStreak = async (req, res) => {
   }
 };
 
+const updateStreak = async (req, res) => {
+  try {
+    const { streakName, goal, streakId } = req.body;
+    const userId = req.user.id;
+
+    if (!streakName && !goal && !streakId) {
+      return res.status(400).json({ error: "Please provide all fields." });
+    }
+
+    const findStreak = await prisma.streak.findUnique({
+      where: { streakId: parseInt(streakId) },
+    });
+
+    if (!findStreak) return res.status(400).json({ error: "No ID found." });
+    console.log(findStreak.userId, userId)
+    if(findStreak.userId != userId) return res.status(200).json({error: "You are not authenticated."})
+    await prisma.streak.update({
+      where: { streakId: parseInt(streakId) },
+      data: {
+        streakName,
+        goal,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ success: "Successfully Updated your streak." });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   postStreak,
   getStreak,
   getDetailViewStreak,
   addStreakCount,
   AIresponse,
-  deleteStreak
+  deleteStreak,
+  updateStreak,
 };

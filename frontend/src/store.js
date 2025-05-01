@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { getProfileReducer, googleAuthReducer } from "./reducer/authReducer";
 import {
+  deleteStreakReducer,
   getDetailStreakReducer,
   getStreakReducer,
   postStreakReducer,
   promtAiReducer,
+  updateStreakReducer,
 } from "./reducer/streakReducer";
 
 const appReducer = combineReducers({
@@ -13,7 +15,9 @@ const appReducer = combineReducers({
   postStreak: postStreakReducer,
   getStreak: getStreakReducer,
   getDetailStreak: getDetailStreakReducer,
-  promtAi: promtAiReducer
+  promtAi: promtAiReducer,
+  deleteStreak : deleteStreakReducer,
+  updateStreak : updateStreakReducer
 });
 
 //rootReducer resets the entire Redux state by passing 
