@@ -111,40 +111,46 @@ const getDetailViewStreak = async (req, res) => {
 const addStreakCount = async (req, res) => {
   try {
     const { streakId } = req.body;
-    let highStreak = 0;
-    const today = new Date();
-    today.setDate(today.getUTCDate() + 1);
-    today.setUTCHours(0, 0, 0, 0);
-    const nextMidnightDate = new Date();
-    nextMidnightDate.setDate(nextMidnightDate.getUTCDate() + 2);
-    nextMidnightDate.setUTCHours(0, 0, 0, 0);
-
-    const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
-    const coolDownTimer = new Date(manilaNow.getTime() + 60000);
-    const endOfTime = new Date(manilaNow.getTime() + 66000);
 
     const fetchStreak = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },
     });
 
-    if (fetchStreak.coolDown)
+    if (!fetchStreak) {
+      return res.status(404).json({ error: "Streak not found" });
+    }
+
+    if (fetchStreak.coolDown) {
       return res
         .status(400)
         .json({ error: `${fetchStreak.coolDownTimer.toUTCString()}` });
+    }
+    const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
 
+    const nextMidnightDate = new Date();
+    nextMidnightDate.setDate(nextMidnightDate.getUTCDate() + 1);
+    nextMidnightDate.setUTCHours(0, 0, 0, 0);
+
+    const nextNextMidnightDate = new Date();
+    nextNextMidnightDate.setDate(nextNextMidnightDate.getUTCDate() + 2);
+    nextNextMidnightDate.setUTCHours(0, 0, 0, 0);
+
+    const coolDownTimer = nextMidnightDate;
+
+    const endOfTime = nextNextMidnightDate;
+
+    let highStreak = fetchStreak.highestStreak;
     if (fetchStreak.currentStreak + 1 > fetchStreak.highestStreak) {
-      highStreak = fetchStreak.currentStreak;
-    } else {
-      highStreak = fetchStreak.highestStreak;
+      highStreak = fetchStreak.currentStreak + 1;
     }
 
     const updateStreakCount = await prisma.streak.update({
       where: { streakId: parseInt(streakId) },
       data: {
         currentStreak: fetchStreak.currentStreak + 1,
-        highestStreak: highStreak + 1,
+        highestStreak: highStreak,
         lastActionTime: new Date(),
-        streakStarted: fetchStreak.streakStarted,
+        streakStarted: fetchStreak.streakStarted || new Date(),
         endOfTime: endOfTime,
         coolDown: true,
         coolDownTimer: coolDownTimer,
@@ -154,10 +160,10 @@ const addStreakCount = async (req, res) => {
 
     return res.status(200).json({ success: updateStreakCount });
   } catch (err) {
+    console.error("Error updating streak:", err);
     return res.status(500).json({ error: err.message });
   }
 };
-
 const AIresponse = async (req, res) => {
   try {
     const { streakId } = req.params;
@@ -168,34 +174,32 @@ const AIresponse = async (req, res) => {
         user: {
           select: {
             name: true,
-          }
-        }
+          },
+        },
       },
     });
-    console.log("qwe", getData.aiResponse)
 
     const prompt = `You are a motivational coach and health progress indicator. Your task is to respond based on the user's goal, the title of their streak, and the number of streak days.
 
-    Provide the following in your response:
-    1. If the current streak is 0, encourage the user to start and take the first step.
-    2. If the streak is ongoing, motivate based on their current streak.
-    3. Mention possible improvements based on the streak duration.
-    4. Encourage them to beat or maintain their highest streak.
-    5. Keep it short, casual, and natural. Do not include section titles like "Motivation", "Insights", etc.
-    
-    User Data:
-    - Goal: ${getData.goal}
-    - Streak Title: ${getData.streakName}
-    - Current Streak: ${getData.currentStreak} days
-    - Highest Streak: ${getData.highestStreak} days
-    - Name of the user: ${getData.user.name} (only use their first name, not surname)
-    
-    Additional instructions:
-    - If the user has already have a streak base on the highest streak you should say something because they break their streak
-    - Saying your back to zero but add some motivational text for the user
-    `;
+Provide the following in your response:
+1. If the current streak is 0, encourage the user to start and take the first step.
+2. If the streak is ongoing, motivate based on their current streak.
+3. Mention possible improvements based on the streak duration.
+4. Encourage them to beat or maintain their highest streak.
+5. Keep it short, casual, and natural. Do not include section titles like "Motivation", "Insights", etc.
 
+User Data:
+- Goal: ${getData.goal}
+- Streak Title: ${getData.streakName}
+- Current Streak: ${getData.currentStreak} days
+- Highest Streak: ${getData.highestStreak} days
+- Name of the user: ${getData.user.name.split(" ")[0]}
 
+Additional instructions:
+- If current streak is 0:
+- If highest streak > 0: say they broke their streak, but motivate them to start again.
+- If highest is 0: just encourage them to begin—don’t mention being back to zero.
+`;
     if (
       (getData.currentStreak == 0 && getData.aiPrompt) ||
       (getData.coolDown && getData.aiPrompt) ||
@@ -208,7 +212,7 @@ const AIresponse = async (req, res) => {
         data: {
           response: result.response.text(),
           streakId: getData.streakId,
-          dateReturn: timeNow
+          dateReturn: timeNow,
         },
       });
 
@@ -221,6 +225,7 @@ const AIresponse = async (req, res) => {
     }
     const getAllAiResponse = await prisma.aiResponse.findMany({
       where: { streakId: parseInt(streakId) },
+      orderBy: { responseId: 'desc' }, 
     });
     return res.status(200).json({ success: getAllAiResponse });
   } catch (err) {
@@ -230,7 +235,7 @@ const AIresponse = async (req, res) => {
 
 const deleteStreak = async (req, res) => {
   try {
-    const {streakId} = req.params;
+    const { streakId } = req.params;
     const userId = req.user.id;
 
     if (!streakId) return res.status(400).json({ error: "No ID found." });
@@ -267,7 +272,7 @@ const updateStreak = async (req, res) => {
     });
 
     if (!findStreak) return res.status(400).json({ error: "No ID found." });
-    console.log(findStreak.userId, userId);
+
     if (findStreak.userId != userId)
       return res.status(200).json({ error: "You are not authenticated." });
     await prisma.streak.update({
