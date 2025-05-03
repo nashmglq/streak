@@ -23,7 +23,7 @@ export const SideBar = () => {
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Changed from sm:translate-x-0 to lg:translate-x-0 so tablets use the toggle */}
+      
       <aside className={`fixed top-0 left-0 z-40 w-16 h-screen transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 bg-gray-50 dark:bg-gray-800`}>
         <div className="h-full px-3 py-8 overflow-y-auto">
           <ul className="space-y-6 font-medium">
