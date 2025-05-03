@@ -15,16 +15,16 @@ export const SideBar = () => {
 
   return (
     <>
-
       <button 
         onClick={toggleSidebar} 
-        className="fixed top-1 left-4 z-50 block sm:hidden text-neutral-400 p-2 rounded-md"
+        className="fixed top-1 left-4 z-50 block lg:hidden text-neutral-400 p-2 rounded-md"
         aria-label="Toggle sidebar"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      <aside className={`fixed top-0 left-0 z-40 w-16 h-screen transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} sm:translate-x-0 bg-gray-50 dark:bg-gray-800`}>
+      {/* Changed from sm:translate-x-0 to lg:translate-x-0 so tablets use the toggle */}
+      <aside className={`fixed top-0 left-0 z-40 w-16 h-screen transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 bg-gray-50 dark:bg-gray-800`}>
         <div className="h-full px-3 py-8 overflow-y-auto">
           <ul className="space-y-6 font-medium">
             <li>
