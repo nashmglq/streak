@@ -43,12 +43,7 @@ export const AiResponse = ({ streakId }) => {
     }
   }, [message]);
 
-useEffect(() => {
-  if (streakId) {
-    dispatch(promtAiActions(streakId));
-  }
-}, [dispatch, streakId]);
-
+  // Removed duplicate useEffect that was calling promtAiActions again
 
   return (
     <div>
@@ -69,7 +64,7 @@ useEffect(() => {
       </div>
 
       {show && (
-        <div className="fixed bottom-16 sm:bottom-24 right-4 sm:right-10 w-80 sm:w-96 bg-white rounded-lg shadow-xl z-40 border border-gray-200 flex flex-col">
+        <div className="fixed bottom-16 sm:bottom-24 right-4 sm:right-10 w-80 sm:w-96 bg-white rounded-lg shadow-xl z-40 border border-gray-200 flex flex-col max-h-[70vh]">
           <div className="flex items-center justify-between bg-yellow-400 text-white p-4 rounded-t-lg">
             <h3 className="font-medium text-sm sm:text-base">
               AI Streak Progress & Benefits
@@ -84,7 +79,7 @@ useEffect(() => {
 
           <div
             ref={chatAreaRef}
-            className="flex-1 p-4 overflow-y-auto h-64 flex flex-col space-y-4"
+            className="flex-1 p-4 overflow-y-auto max-h-[40vh] flex flex-col-reverse space-y-4 scrollbar-thin scrollbar-thumb-yellow-200 scrollbar-track-transparent"
           >
             {loading ? (
               <div className="flex justify-center items-center h-full">

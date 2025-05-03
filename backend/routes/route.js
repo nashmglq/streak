@@ -15,7 +15,7 @@ route.get("/streak-get", authCheck, getStreak)
 route.get("/streak-get/:streakId", authCheck, getDetailViewStreak)
 route.post("/streak-add-count", authCheck, addStreakCount)
 route.get("/streak-get-ai/:streakId", authCheck, AIresponse)
-route.delete("/streak-delete", authCheck, deleteStreak)
+route.delete("/streak-delete/:streakId", authCheck, deleteStreak)
 route.put("/streak-update", authCheck, updateStreak)
 
 module.exports = route;

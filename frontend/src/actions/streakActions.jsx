@@ -206,11 +206,12 @@ export const promtAiActions = (streakId) => async (dispatch) => {
   }
 };
 
-export const deleteStreakActions = (formData) => async (dispatch) => {
+export const deleteStreakActions = (streakId) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_STREAK_REQUEST });
     const getToken = JSON.parse(localStorage.getItem("userInfo"));
     const token = getToken ? getToken.token : null;
+
     const config = token
       ? {
           headers: {
@@ -221,12 +222,12 @@ export const deleteStreakActions = (formData) => async (dispatch) => {
       : null;
 
     const response = await axios.delete(
-      `${baseUrl}/streak-delete`,
-      formData,
+      `${baseUrl}/streak-delete/${streakId}`,
       config
     );
 
     if (response.data && response.data.success) {
+      dispatch(getStreakActions());
       return dispatch({
         type: DELETE_STREAK_SUCCESS,
         payload: response.data.success,
@@ -256,8 +257,10 @@ export const updateStreakActions = (formData) => async (dispatch) => {
           },
         }
       : null;
+
+      console.log(formData)
     const response = await axios.put(
-      `${baseUrl}/streak-delete`,
+      `${baseUrl}/streak-update`,
       formData,
       config
     );
