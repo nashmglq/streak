@@ -161,17 +161,18 @@ const addStreakCount = async (req, res) => {
 const AIresponse = async (req, res) => {
   try {
     const { streakId } = req.params;
-
+    const timeNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const getData = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },
       include: {
         user: {
           select: {
             name: true,
-          },
-        },
+          }
+        }
       },
     });
+    console.log("qwe", getData.aiResponse)
 
     const prompt = `You are a motivational coach and health progress indicator. Your task is to respond based on the user's goal, the title of their streak, and the number of streak days.
 
@@ -207,6 +208,7 @@ const AIresponse = async (req, res) => {
         data: {
           response: result.response.text(),
           streakId: getData.streakId,
+          dateReturn: timeNow
         },
       });
 

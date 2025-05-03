@@ -39,10 +39,11 @@ model Streak {
 }
 
 model AiResponse {
-  responseId Int    @id @default(autoincrement())
-  response   String @db.VarChar(999)
+  responseId Int      @id @default(autoincrement())
+  response   String   @db.VarChar(999)
   streakId   Int
-  streak     Streak @relation(fields: [streakId], references: [streakId], onDelete: Cascade)
+  dateReturn DateTime
+  streak     Streak   @relation(fields: [streakId], references: [streakId], onDelete: Cascade)
 
   @@map("aiResponse")
 }

@@ -41,7 +41,7 @@ const LandingPage = () => {
             onError={handleGoogleError}
             text="signin_with"
             shape="rectangular"
-            theme="filled_blue"
+            theme="filled_white"
           />
         </div>
 

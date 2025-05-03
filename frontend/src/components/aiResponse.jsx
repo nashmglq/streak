@@ -106,9 +106,15 @@ export const AiResponse = ({ streakId }) => {
                           <BotMessageSquare className="text-white" size={14} />
                         </div>
                         <span className="text-xs font-medium text-yellow-600">
-                          AI Assistant
+                          AI Assistant {" "}
+                          {aiMess.dateReturn && (
+                            <span className="text-xs text-gray-400 mt-1">
+                              {new Date(aiMess.dateReturn).toLocaleDateString()}
+                            </span>
+                          )}
                         </span>
                       </div>
+
                       <p className="text-gray-700 text-sm">{aiMess.response}</p>
                     </div>
                   </div>
