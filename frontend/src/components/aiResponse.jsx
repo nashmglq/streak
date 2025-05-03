@@ -24,6 +24,7 @@ export const AiResponse = ({ streakId }) => {
     if (streakId) {
       dispatch(promtAiActions(streakId));
     }
+
   }, [dispatch, streakId]);
 
   useEffect(() => {
@@ -43,7 +44,6 @@ export const AiResponse = ({ streakId }) => {
     }
   }, [message]);
 
-  // Removed duplicate useEffect that was calling promtAiActions again
 
   return (
     <div>

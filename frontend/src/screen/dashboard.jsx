@@ -3,7 +3,7 @@ import { CreateStreak } from "../components/createStreak";
 import { useDispatch, useSelector } from "react-redux";
 import { getStreakActions } from "../actions/streakActions";
 import { Link } from "react-router-dom";
-import { EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical } from "lucide-react";
 import { DeleteStreak } from "../components/deleteStreak";
 import { UpdateStreak } from "../components/updateStreak";
 
@@ -25,6 +25,13 @@ export const Dashboard = () => {
     dispatch({ type: "RESET_STATE" });
   }, [dispatch]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch(getStreakActions());
+    }, 600000);
+
+    return () => clearInterval(intervalId);
+  }, [dispatch]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -39,28 +46,23 @@ export const Dashboard = () => {
     };
   }, []);
 
-
   const toggleDropdown = (e, streakId) => {
     e.preventDefault();
     e.stopPropagation();
     setActiveDropdown(activeDropdown === streakId ? null : streakId);
   };
 
-
   const handleCloseModals = () => {
     setActiveDropdown(null);
   };
-  
+
   return (
     <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-20 min-h-screen py-8 md:py-12">
       {message && Array.isArray(message) && message.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {message.map((streak) => (
             <div key={streak.streakId} className="relative">
-              <Link
-                to={`/streak/${streak.streakId}`}
-                className="block"
-              >
+              <Link to={`/streak/${streak.streakId}`} className="block">
                 <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full overflow-hidden border border-gray-100">
                   <div className="p-4">
                     <div className="flex items-center gap-3 mb-3">
@@ -77,7 +79,7 @@ export const Dashboard = () => {
                         </p>
                       </div>
                       <div className="relative">
-                        <button 
+                        <button
                           onClick={(e) => toggleDropdown(e, streak.streakId)}
                           className="p-2 transition-all duration-300 hover:bg-gray-100 rounded-full hover:shadow-sm"
                         >
@@ -99,15 +101,14 @@ export const Dashboard = () => {
                   </div>
                 </div>
               </Link>
-              
 
               {activeDropdown === streak.streakId && (
-                <div 
+                <div
                   ref={dropdownRef}
                   className="absolute right-2 top-14 bg-white rounded-md shadow-lg border border-gray-200 z-10 w-48"
                 >
                   <div className="py-1">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -119,7 +120,7 @@ export const Dashboard = () => {
                     >
                       <span className="mr-2">✏️</span> Update Streak
                     </button>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -148,37 +149,35 @@ export const Dashboard = () => {
         </div>
       )}
       <CreateStreak />
-      
 
       {showUpdateModal && (
-        <div 
+        <div
           onClick={() => setShowUpdateModal(false)}
           className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
         >
-          <div 
+          <div
             onClick={(e) => e.stopPropagation()}
             className="bg-white p-6 rounded shadow-lg"
           >
-            <UpdateStreak 
+            <UpdateStreak
               streak={selectedStreak}
               closeModal={() => setShowUpdateModal(false)}
             />
           </div>
         </div>
       )}
-      
 
       {showDeleteModal && (
-        <div 
+        <div
           onClick={() => setShowDeleteModal(false)}
           className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
         >
-          <div 
+          <div
             onClick={(e) => e.stopPropagation()}
             className="bg-white p-6 rounded shadow-lg"
           >
-            <DeleteStreak 
-              streakId={selectedStreak?.streakId} 
+            <DeleteStreak
+              streakId={selectedStreak?.streakId}
               closeModal={() => setShowDeleteModal(false)}
             />
           </div>

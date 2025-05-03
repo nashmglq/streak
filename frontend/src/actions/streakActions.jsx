@@ -155,6 +155,7 @@ export const addStreakCountActions = (formData) => async (dispatch) => {
 
     if (response.data && response.data.success) {
       dispatch(getDetailStreakActions(streakId));
+      dispatch(promtAiActions(streakId))
       return dispatch({
         type: ADD_STREAK_COUNT_SUCCESS,
         payload: response.data.success,

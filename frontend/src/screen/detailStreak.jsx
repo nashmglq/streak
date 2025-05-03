@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getDetailStreakReducer } from "../reducer/streakReducer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   addStreakCountActions,
   getDetailStreakActions,
@@ -11,6 +11,7 @@ import { TrophyIcon, FlameIcon, CalendarIcon, ArrowUpIcon } from "lucide-react";
 import { AiResponse } from "../components/aiResponse";
 
 export const DetailStreak = () => {
+  const [signal, isSignal] = useState(false)
   const { id } = useParams();
   const streakId = id;
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export const DetailStreak = () => {
     e.preventDefault();
     const formData = { streakId };
     dispatch(addStreakCountActions(formData));
+
   };
 
   useEffect(() => {
@@ -95,7 +97,7 @@ export const DetailStreak = () => {
                     className="w-full p-4 rounded-lg shadow-md bg-neutral-300 text-neutral-600 cursor-not-allowed flex items-center justify-center"
                     disabled
                   >
-                    <TimeCoolDown time={message.coolDownTimer} id={id} />
+                    <TimeCoolDown time={message.coolDownTimer} id={id} signal = {message.coolDown} />
                   </button>
                 ) : (
                   <button
