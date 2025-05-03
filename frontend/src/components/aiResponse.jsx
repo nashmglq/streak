@@ -43,15 +43,12 @@ export const AiResponse = ({ streakId }) => {
     }
   }, [message]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (streakId) {
-        dispatch(promtAiActions(streakId));
-      }
-    }, 30000);
+useEffect(() => {
+  if (streakId) {
+    dispatch(promtAiActions(streakId));
+  }
+}, [dispatch, streakId]);
 
-    return () => clearInterval(interval);
-  }, [dispatch, streakId]);
 
   return (
     <div>
