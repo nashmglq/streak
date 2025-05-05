@@ -11,7 +11,7 @@ import { TrophyIcon, FlameIcon, CalendarIcon, ArrowUpIcon } from "lucide-react";
 import { AiResponse } from "../components/aiResponse";
 
 export const DetailStreak = () => {
-  const [signal, isSignal] = useState(false)
+  const [signal, isSignal] = useState(false);
   const { id } = useParams();
   const streakId = id;
   const dispatch = useDispatch();
@@ -23,13 +23,11 @@ export const DetailStreak = () => {
     e.preventDefault();
     const formData = { streakId };
     dispatch(addStreakCountActions(formData));
-
   };
 
   useEffect(() => {
     dispatch(getDetailStreakActions(id));
   }, [dispatch, id]);
-
 
   const calculateDaysSince = (startDate) => {
     if (!startDate) return 0;
@@ -54,6 +52,11 @@ export const DetailStreak = () => {
                 <p className="text-sm text-neutral-600 mt-1">
                   Started {new Date(message.streakStarted).toLocaleDateString()}
                 </p>
+                <div className="text-xs text-neutral-500 mt-2">
+                  <span> Last update:                    {message.lastActionTime
+                        ? new Date(message.lastActionTime).toLocaleDateString()
+                        : "Never"}</span>
+                </div>
               </div>
 
               {/* Main content */}
@@ -97,7 +100,11 @@ export const DetailStreak = () => {
                     className="w-full p-4 rounded-lg shadow-md bg-neutral-300 text-neutral-600 cursor-not-allowed flex items-center justify-center"
                     disabled
                   >
-                    <TimeCoolDown time={message.coolDownTimer} id={id} signal = {message.coolDown} />
+                    <TimeCoolDown
+                      time={message.coolDownTimer}
+                      id={id}
+                      signal={message.coolDown}
+                    />
                   </button>
                 ) : (
                   <button

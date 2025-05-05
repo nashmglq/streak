@@ -51,11 +51,23 @@ const postStreak = async (req, res) => {
 const getStreak = async (req, res) => {
   try {
     const id = req.user.id;
+    const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
 
+    const isManilaMidnight = manilaNow.getHours() === 0;
+    
+    console.log(isManilaMidnight, manilaNow)
+    if (isManilaMidnight) {
+      await prisma.streak.updateMany({
+        where: { userId: id },
+        data: {
+          coolDown: false,
+        },
+      });
+    }
     const findUserStreaks = await prisma.streak.findMany({
       where: { userId: id },
+      orderBy: { streakId: 'asc' }, 
     });
-
     if (!id || !findUserStreaks)
       return res.status(400).json({ error: "No ID found." });
 

@@ -28,7 +28,7 @@ export const Dashboard = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       dispatch(getStreakActions());
-    }, 600000);
+    }, 1800000);
 
     return () => clearInterval(intervalId);
   }, [dispatch]);
