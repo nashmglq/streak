@@ -51,32 +51,52 @@ const postStreak = async (req, res) => {
 const getStreak = async (req, res) => {
   try {
     const id = req.user.id;
-    const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
 
-    const isManilaMidnight = manilaNow.getHours() === 0;
-    
-    console.log(isManilaMidnight, manilaNow)
-    if (isManilaMidnight) {
-      await prisma.streak.updateMany({
-        where: { userId: id },
-        data: {
-          coolDown: false,
-        },
-      });
-    }
-    const findUserStreaks = await prisma.streak.findMany({
-      where: { userId: id },
-      orderBy: { streakId: 'asc' }, 
+
+    const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const now = manilaNow.toISOString();
+
+
+    await prisma.streak.updateMany({
+      where: { 
+        userId: id,
+        coolDown: true,
+        coolDownTimer: {
+          lte: manilaNow  
+        }
+      },
+      data: {
+        coolDown: false
+      }
     });
-    if (!id || !findUserStreaks)
-      return res.status(400).json({ error: "No ID found." });
+    
+  
+    await prisma.streak.updateMany({
+      where: {
+        userId: id,
+        endOfTime: {
+          lte: manilaNow  
+        }
+      },
+      data: {
+        currentStreak: 0,
+        aiPrompt: true
+      }
+    });
+    
+
+    const findUserStreaks = await prisma.streak.findMany({
+      where: { userId: id }
+    });
+
+    if (!findUserStreaks.length)
+      return res.status(400).json({ error: "No streaks found." });
 
     return res.status(200).json({ success: findUserStreaks });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
-
 const getDetailViewStreak = async (req, res) => {
   try {
     const { streakId } = req.params;
