@@ -24,7 +24,7 @@ export const SideBar = () => {
       </button>
 
       
-      <aside className={`fixed top-0 left-0 z-40 w-16 h-screen transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 bg-gray-50 dark:bg-gray-800`}>
+      <aside className={`fixed top-0 left-0 z-40 w-18 h-screen transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 bg-gray-50 dark:bg-gray-800`}>
         <div className="h-full px-3 py-8 overflow-y-auto">
           <ul className="space-y-6 font-medium">
             <li>

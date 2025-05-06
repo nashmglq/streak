@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const cron = require('node-cron');
 
 const postStreak = async (req, res) => {
   try {
@@ -50,9 +51,7 @@ const postStreak = async (req, res) => {
 
 const getStreak = async (req, res) => {
   try {
-    const id = req.user.id;
-
-
+    const id = req.user.id; 
     const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const now = manilaNow.toISOString();
 
@@ -323,6 +322,34 @@ const updateStreak = async (req, res) => {
   }
 };
 
+
+const initNotifyController = (io) => {
+  console.log("🔄 Setting up recurring notifications every 30 seconds");
+  
+  const task = cron.schedule('0 0 0 * * *', () => {  // This triggers at midnight (00:00:00)
+    const currentTime = new Date();
+    const formattedTime = currentTime.toLocaleString('en-US', { 
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+    
+    console.log(`🚨 Sending notification at: ${formattedTime}`);
+    
+    io.emit('midnightNotification', {
+      title: "🌙 It's midnight — your streaks are ready!",
+      message: `Yo! It's ${formattedTime} already. If you haven’t started any streaks yet, bro... let’s get it going 💪🔥`,
+      requiresAttention: true
+    });
+  });
+  
+  console.log("✅ Recurring notification service started");
+  
+  return task;
+};
+
+
 module.exports = {
   postStreak,
   getStreak,
@@ -331,4 +358,5 @@ module.exports = {
   AIresponse,
   deleteStreak,
   updateStreak,
+  initNotifyController
 };

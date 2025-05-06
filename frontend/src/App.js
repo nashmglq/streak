@@ -6,12 +6,14 @@ import { Dashboard } from "./screen/dashboard";
 import { ProtectedRouting } from "./utils/protectedRoutes";
 import { Profile } from "./screen/profile";
 import { DetailStreak } from "./screen/detailStreak";
+import NotificationManager from "./components/notifications";
 function App() {
   const clientId = process.env.REACT_APP_CLIENT_ID;
 
   console.log(clientId);
   return (
     <div className="App">
+      <NotificationManager />
       <BrowserRouter>
         {/* client = {} must be same */}
         <GoogleOAuthProvider clientId={clientId}>
