@@ -22,7 +22,7 @@ import {
   UPDATE_STREAK_REQUEST,
   UPDATE_STREAK_SUCCESS,
 } from "../constants/streakConstatns";
-const baseUrl = "http://localhost:5000";
+const baseUrl = process.env.REACT_APP_API_URL
 
 export const postStreakActions = (formData) => async (dispatch) => {
   try {

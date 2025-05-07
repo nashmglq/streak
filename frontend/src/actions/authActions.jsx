@@ -7,7 +7,7 @@ import {
   GET_PROFILE_REQUEST,
   GET_PROFILE_SUCCESS,
 } from "../constants/authConstants";
-const baseUrl = "http://localhost:5000";
+const baseUrl = process.env.REACT_APP_API_URL
 
 export const googleAuthActions = (credential, nav) => async (dispatch) => {
   try {
