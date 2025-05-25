@@ -27,7 +27,7 @@ export const Dashboard = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!loading && shouldReset && (success || error)) {
+    if (!loading && shouldReset) {
       dispatch({ type: "RESET_STATE" });
       setShouldReset(false);
     }
