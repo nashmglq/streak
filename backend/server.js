@@ -52,7 +52,13 @@ initNotifyController(io);
 
 app.use(passport.initialize());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "https://streak-7eh2.vercel.app/",
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,  
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
