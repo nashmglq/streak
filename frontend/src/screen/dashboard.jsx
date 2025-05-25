@@ -23,15 +23,15 @@ export const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getStreakActions());
-dispatch({ type: "RESET_STATE" });
+    setShouldReset(true);
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   if (!loading && shouldReset && (success || error)) {
-  //     dispatch({ type: "RESET_STATE" });
-  //     setShouldReset(false);
-  //   }
-  // }, [loading, shouldReset, success, error, dispatch]);
+  useEffect(() => {
+    if (!loading && shouldReset && (success || error)) {
+      dispatch({ type: "RESET_STATE" });
+      setShouldReset(false);
+    }
+  }, [loading, shouldReset, success, error, dispatch]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
