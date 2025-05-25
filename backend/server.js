@@ -14,21 +14,12 @@ const jwt = require("jsonwebtoken");
 
 const authenticatedSockets = new Set();
 
-
-const corsOptions = {
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false
-};
-
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: "*", 
   },
-  transports: ['websocket', 'polling']
 });
+
 
 io.on('connection', (socket) => {
   const token = socket.handshake.auth?.token?.split(" ")[1];
@@ -56,14 +47,16 @@ io.on('connection', (socket) => {
   }
 });
 
+
 initNotifyController(io);
 
 app.use(passport.initialize());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(cors(corsOptions)); 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", route);
+
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
