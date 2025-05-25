@@ -2,21 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
-import { googleAuthActions } from "../actions/authActions"; // Adjust path as needed
+import { googleAuthActions } from "../actions/authActions";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   const userInfo = localStorage.getItem("userInfo");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleGoogleSuccess = (googleCredentials) => {
-    dispatch(
-      googleAuthActions({ credential: googleCredentials.credential }, nav)
-    );
+  const handleGoogleSuccess = async (googleCredentials) => {
+    setIsLoading(true);
+    try {
+      await dispatch(
+        googleAuthActions({ credential: googleCredentials.credential }, nav)
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleError = () => {
     console.log("Google Authentication Error");
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -33,14 +40,21 @@ const LandingPage = () => {
           ⚡Streak⚡
         </h1>
         <div className="my-6 flex justify-center">
-          <GoogleLogin
-            useOneTap
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            text="signin_with"
-            shape="rectangular"
-            theme="filled_white"
-          />
+          {isLoading ? (
+            <div className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-400"></div>
+              <span className="text-amber-400 font-medium">Signing you in...</span>
+            </div>
+          ) : (
+            <GoogleLogin
+              useOneTap
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              text="signin_with"
+              shape="rectangular"
+              theme="filled_white"
+            />
+          )}
         </div>
         <p className="text-base sm:text-lg md:text-xl bg-gradient-to-r from-amber-400 via-yellow-900 to-amber-400 bg-clip-text text-transparent max-w-2xl mx-auto my-2">
           Click to streak. Get inspired. Stay healthy. See your progress.

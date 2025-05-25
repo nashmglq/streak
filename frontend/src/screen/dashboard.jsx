@@ -3,7 +3,7 @@ import { CreateStreak } from "../components/createStreak";
 import { useDispatch, useSelector } from "react-redux";
 import { getStreakActions } from "../actions/streakActions";
 import { Link } from "react-router-dom";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Loader2 } from "lucide-react";
 import { DeleteStreak } from "../components/deleteStreak";
 import { UpdateStreak } from "../components/updateStreak";
 
@@ -58,7 +58,11 @@ export const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-20 min-h-screen py-8 md:py-12">
-      {message && Array.isArray(message) && message.length > 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center h-64 md:h-96">
+          <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+        </div>
+      ) : message && Array.isArray(message) && message.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {message.map((streak) => (
             <div key={streak.streakId} className="relative">
