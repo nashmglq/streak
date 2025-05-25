@@ -19,19 +19,19 @@ export const Dashboard = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedStreak, setSelectedStreak] = useState(null);
-  const [shouldReset, setShouldReset] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
     dispatch(getStreakActions());
-    setShouldReset(true);
   }, [dispatch]);
 
+
   useEffect(() => {
-    if (!loading && shouldReset) {
+    if (!loading && (success || error) && !hasLoaded) {
       dispatch({ type: "RESET_STATE" });
-      setShouldReset(false);
+      setHasLoaded(true);
     }
-  }, [loading, shouldReset, success, error, dispatch]);
+  }, [loading, success, error, hasLoaded, dispatch]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -206,4 +206,5 @@ return (
       </div>
     )}
   </div>
-);}
+);
+};
