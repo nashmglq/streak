@@ -23,7 +23,7 @@ import {
   UPDATE_STREAK_SUCCESS,
 } from "../constants/streakConstatns";
 const baseUrl = process.env.REACT_APP_API_URL
-
+console.log(baseUrl)
 
 export const postStreakActions = (formData) => async (dispatch) => {
   try {
