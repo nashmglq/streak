@@ -89,13 +89,15 @@ const getStreak = async (req, res) => {
     });
 
     if (!findUserStreaks.length)
-      return res.status(200).json({ error: "No streaks yet." });
+      return res.status(200).json({ success: "No streaks yet." });
 
     return res.status(200).json({ success: findUserStreaks });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
+
+
 const getDetailViewStreak = async (req, res) => {
   try {
     const { streakId } = req.params;
