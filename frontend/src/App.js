@@ -10,7 +10,6 @@ import NotificationManager from "./components/notifications";
 function App() {
   const clientId = process.env.REACT_APP_CLIENT_ID;
 
-  console.log(clientId);
   return (
     <div className="App">
       <NotificationManager />

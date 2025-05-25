@@ -47,10 +47,10 @@ export const DetailStreak = () => {
               {/* Header */}
               <div className="bg-yellow-50 p-6 border-b border-yellow-100">
                 <h1 className="text-2xl font-bold text-neutral-800">
-                  {message.streakName}
+                  {message.streakName || "Loading..."}
                 </h1>
                 <p className="text-sm text-neutral-600 mt-1">
-                  Started {new Date(message.streakStarted).toLocaleDateString()}
+                  Started {new Date(message.streakStarted).toLocaleDateString() || "Loading..."}
                 </p>
                 <div className="text-xs text-neutral-500 mt-2">
                   <span> Last update:                    {message.lastActionTime
@@ -91,7 +91,7 @@ export const DetailStreak = () => {
                   <h3 className="text-sm uppercase text-neutral-500 font-medium mb-2">
                     My Goal
                   </h3>
-                  <p className="text-neutral-700 text-sm">{message.goal}</p>
+                  <p className="text-neutral-700 text-sm">{message.goal || "Loading..."}</p>
                 </div>
 
                 {/* Action button */}

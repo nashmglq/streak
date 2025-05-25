@@ -12,7 +12,6 @@ export const ProtectedRouting = ({ children }) => {
 
   // check every load
   useEffect(() => {
-    console.log(userInfo)
     if (!userInfo) nav("/");
   }, []);
 
