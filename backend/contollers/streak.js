@@ -89,7 +89,7 @@ const getStreak = async (req, res) => {
     });
 
     if (!findUserStreaks.length)
-      return res.status(400).json({ error: "No streaks found." });
+      return res.status(200).json({ error: "No streaks yet." });
 
     return res.status(200).json({ success: findUserStreaks });
   } catch (err) {
