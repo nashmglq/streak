@@ -15,7 +15,7 @@ export const useSocket = () => {
       return;
     }
 
-    const socketInstance = io("http://localhost:5001/", {
+    const socketInstance = io(process.env.REACT_APP_API_URL, {
       auth: { token: `Bearer ${token}` },
     });
 
