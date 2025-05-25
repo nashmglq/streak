@@ -150,7 +150,7 @@ return (
           </div>
         ))}
       </div>
-    ) : !loading && success && Array.isArray(message) && message.length === 0 ? (
+    ) : !loading && success ? (
       <div className="flex justify-center items-center h-64 md:h-96">
         <div className="text-center px-4">
           <p className="text-gray-500 mb-2">No streaks yet</p>
