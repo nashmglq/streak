@@ -3,12 +3,13 @@ const prisma = new PrismaClient();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-const cron = require('node-cron');
+const cron = require("node-cron");
 
 const postStreak = async (req, res) => {
   try {
     const { streakName, goal } = req.body;
     const id = req.user.id;
+
 
     const findUser = await prisma.streak.findFirst({
       where: { userId: id, streakName: streakName },
@@ -51,41 +52,38 @@ const postStreak = async (req, res) => {
 
 const getStreak = async (req, res) => {
   try {
-    const id = req.user.id; 
+    const id = req.user.id;
     const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const now = manilaNow.toISOString();
 
-
     await prisma.streak.updateMany({
-      where: { 
+      where: {
         userId: id,
         coolDown: true,
         coolDownTimer: {
-          lte: manilaNow  
-        }
+          lte: manilaNow,
+        },
       },
       data: {
-        coolDown: false
-      }
+        coolDown: false,
+      },
     });
-    
-  
+
     await prisma.streak.updateMany({
       where: {
         userId: id,
         endOfTime: {
-          lte: manilaNow  
-        }
+          lte: manilaNow,
+        },
       },
       data: {
         currentStreak: 0,
-        aiPrompt: true
-      }
+        aiPrompt: true,
+      },
     });
-    
 
     const findUserStreaks = await prisma.streak.findMany({
-      where: { userId: id }
+      where: { userId: id },
     });
 
     if (!findUserStreaks.length)
@@ -97,11 +95,10 @@ const getStreak = async (req, res) => {
   }
 };
 
-
 const getDetailViewStreak = async (req, res) => {
   try {
     const { streakId } = req.params;
-
+    const userId = req.user.id
     const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const now = manilaNow.toISOString();
 
@@ -111,7 +108,10 @@ const getDetailViewStreak = async (req, res) => {
       where: { streakId: parseInt(streakId) },
     });
 
+
     if (!findStreakId) return res.status(400).json({ error: "No ID found." });
+
+    if(findStreakId.userId != userId) return res.status(400).json({error: "You are not the owner of this streak."})
 
     const coolDownTimeISO = findStreakId.coolDownTimer.toISOString();
     const endOfStreakISO = findStreakId.endOfTime.toISOString();
@@ -144,10 +144,13 @@ const getDetailViewStreak = async (req, res) => {
 const addStreakCount = async (req, res) => {
   try {
     const { streakId } = req.body;
+    const userId = req.user.id
 
     const fetchStreak = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },
     });
+
+    if(fetchStreak.userId != userId) return res.status(400).json({error: "You are not the owner of this streak."})
 
     if (!fetchStreak) {
       return res.status(404).json({ error: "Streak not found" });
@@ -258,7 +261,7 @@ Additional instructions:
     }
     const getAllAiResponse = await prisma.aiResponse.findMany({
       where: { streakId: parseInt(streakId) },
-      orderBy: { responseId: 'desc' }, 
+      orderBy: { responseId: "desc" },
     });
     return res.status(200).json({ success: getAllAiResponse });
   } catch (err) {
@@ -324,33 +327,32 @@ const updateStreak = async (req, res) => {
   }
 };
 
-
 const initNotifyController = (io) => {
   console.log("🔄 Setting up recurring notifications every 30 seconds");
-  
-  const task = cron.schedule('0 0 0 * * *', () => {  // This triggers at midnight (00:00:00)
+
+  const task = cron.schedule("0 0 0 * * *", () => {
+    // This triggers at midnight (00:00:00)
     const currentTime = new Date();
-    const formattedTime = currentTime.toLocaleString('en-US', { 
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
+    const formattedTime = currentTime.toLocaleString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
     });
-    
+
     console.log(`🚨 Sending notification at: ${formattedTime}`);
-    
-    io.emit('midnightNotification', {
+
+    io.emit("midnightNotification", {
       title: "🌙 It's midnight — your streaks are ready!",
       message: `Yo! It's ${formattedTime} already. If you haven’t started any streaks yet, bro... let’s get it going 💪🔥`,
-      requiresAttention: true
+      requiresAttention: true,
     });
   });
-  
+
   console.log("✅ Recurring notification service started");
-  
+
   return task;
 };
-
 
 module.exports = {
   postStreak,
@@ -360,5 +362,5 @@ module.exports = {
   AIresponse,
   deleteStreak,
   updateStreak,
-  initNotifyController
+  initNotifyController,
 };
