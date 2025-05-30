@@ -203,6 +203,7 @@ const addStreakCount = async (req, res) => {
 const AIresponse = async (req, res) => {
   try {
     const { streakId } = req.params;
+    const id = req.user.id
     const timeNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const getData = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },
@@ -214,6 +215,8 @@ const AIresponse = async (req, res) => {
         },
       },
     });
+
+     if(getData.userId != id) return res.status(400).json({error: "You are not the owner of this streak."})
 
     const prompt = `You are a motivational coach and health progress indicator. Your task is to respond based on the user's goal, the title of their streak, and the number of streak days.
 
