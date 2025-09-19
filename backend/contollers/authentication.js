@@ -48,7 +48,11 @@ const verifyGoogleToken = async (req, res) => {
 
     if (user) return res.status(200).json({ success: { token: token } });
 
-    return res.status(200).json({ success: { token: token } });
+    return res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict"
+    }).status(200).json({message: "Login Success"})
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({ error: err.message });
