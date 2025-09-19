@@ -13,13 +13,14 @@ const baseUrl = process.env.REACT_APP_API_URL
 export const googleAuthActions = (credential, nav) => async (dispatch) => {
   try {
     dispatch({ type: GET_GOOGLE_AUTH_REQUEST });
-    const response = await axios.post(
-      `${baseUrl}/auth/google/verify`,
-      credential
-    );
+
+    const response = await axios.post(`${baseUrl}/auth/google/verify`, {
+      credential, 
+    }, {
+      withCredentials: true
+    });
 
     if (response && response.data.success) {
-      localStorage.setItem("userInfo", JSON.stringify(response.data.success));
       nav("/dashboard");
       return dispatch({
         type: GET_GOOGLE_AUTH_SUCCESS,
@@ -30,9 +31,7 @@ export const googleAuthActions = (credential, nav) => async (dispatch) => {
     return dispatch({
       type: GET_GOOGLE_AUTH_FAIL,
       payload:
-        err.response.data && err.response.data.error
-          ? err.response.data.error
-          : "Something went wrong.",
+        err.response?.data?.error || "Something went wrong.",
     });
   }
 };
@@ -40,18 +39,14 @@ export const googleAuthActions = (credential, nav) => async (dispatch) => {
 export const getProfileActions = () => async (dispatch) => {
   try {
     dispatch({ type: GET_PROFILE_REQUEST });
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
+  
 
-    const response = await axios.get(`${baseUrl}/profile`, config);
+    const response = await axios.get(`${baseUrl}/profile`, {
+      withCredentials: true,
+      headers: {
+        Accept: "application/json"
+      }
+    });
 
     if (response && response.data.success) {
       return dispatch({

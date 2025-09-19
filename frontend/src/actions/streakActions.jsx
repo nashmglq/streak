@@ -22,29 +22,18 @@ import {
   UPDATE_STREAK_REQUEST,
   UPDATE_STREAK_SUCCESS,
 } from "../constants/streakConstatns";
-const baseUrl = process.env.REACT_APP_API_URL
-
+const baseUrl = process.env.REACT_APP_API_URL;
 
 export const postStreakActions = (formData) => async (dispatch) => {
   try {
     dispatch({ type: POST_STREAK_REQUEST });
 
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
-
-    const response = await axios.post(
-      `${baseUrl}/streak-post`,
-      formData,
-      config
-    );
+    const response = await axios.post(`${baseUrl}/streak-post`, formData, {
+      withCredentials: true,
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
     if (response && response.data.success) {
       return dispatch({
@@ -67,18 +56,13 @@ export const getStreakActions = () => async (dispatch) => {
   try {
     dispatch({ type: GET_STREAK_REQUEST });
 
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
-
-    const response = await axios.get(`${baseUrl}/streak-get`, config);
+  
+    const response = await axios.get(`${baseUrl}/streak-get`, {
+      withCredentials: true,
+      headers: {
+        Accept: "application/json"
+      }
+    });
 
     if (response.data && response.data.success) {
       return dispatch({
@@ -100,20 +84,14 @@ export const getStreakActions = () => async (dispatch) => {
 export const getDetailStreakActions = (streakId) => async (dispatch) => {
   try {
     dispatch({ type: GET_DETAIL_STREAK_REQUEST });
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
+
 
     const response = await axios.get(
       `${baseUrl}/streak-get/${streakId}`,
-      config
+      {
+        withCredentials: true,
+        Accept: "application/json"
+      }
     );
 
     if (response.data && response.data.success) {
@@ -136,27 +114,22 @@ export const getDetailStreakActions = (streakId) => async (dispatch) => {
 export const addStreakCountActions = (formData) => async (dispatch) => {
   try {
     dispatch({ type: ADD_STREAK_COUNT_REQUEST });
-    const streakId = formData.streakId;
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
 
+    const streakId = formData.streakId;
+    
     const response = await axios.post(
       `${baseUrl}/streak-add-count`,
       formData,
-      config
+      {withCredentials: true,
+        headers: {
+          Accept: "application/json"
+        }
+      }
     );
 
     if (response.data && response.data.success) {
       dispatch(getDetailStreakActions(streakId));
-      dispatch(promtAiActions(streakId))
+      dispatch(promtAiActions(streakId));
       return dispatch({
         type: ADD_STREAK_COUNT_SUCCESS,
         payload: response.data.success,
@@ -176,20 +149,15 @@ export const addStreakCountActions = (formData) => async (dispatch) => {
 export const promtAiActions = (streakId) => async (dispatch) => {
   try {
     dispatch({ type: GET_AI_PROMPT_REQUEST });
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
+   
 
     const response = await axios.get(
       `${baseUrl}/streak-get-ai/${streakId}`,
-      config
+      {withCredentials: true,
+        headers: {
+          Accept : "application/json"
+        }
+      }
     );
     if (response.data && response.data.success) {
       return dispatch({
@@ -211,21 +179,15 @@ export const promtAiActions = (streakId) => async (dispatch) => {
 export const deleteStreakActions = (streakId) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_STREAK_REQUEST });
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
+    
 
     const response = await axios.delete(
       `${baseUrl}/streak-delete/${streakId}`,
-      config
+      {withCredentials: true,
+        headers: {
+          Accept: "application/json"
+        }
+      }
     );
 
     if (response.data && response.data.success) {
@@ -249,22 +211,15 @@ export const deleteStreakActions = (streakId) => async (dispatch) => {
 export const updateStreakActions = (formData) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_STREAK_REQUEST });
-    const getToken = JSON.parse(localStorage.getItem("userInfo"));
-    const token = getToken ? getToken.token : null;
-    const config = token
-      ? {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : null;
-
-      console.log(formData)
+   
     const response = await axios.put(
       `${baseUrl}/streak-update`,
       formData,
-      config
+      {withCredentials: true,
+        headers: {
+          Accept: "application/json"
+        }
+      }
     );
 
     if (response.data && response.data.success) {
