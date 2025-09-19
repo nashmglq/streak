@@ -9,19 +9,30 @@ const passport = require("./config/passport");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const { initNotifyController } = require("./contollers/streak"); 
+const { initNotifyController } = require("./contollers/streak");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+
+
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/", route);
+
 
 const authenticatedSockets = new Set();
 
 const io = new Server(server, {
   cors: {
-    origin: "*", 
+    origin: "*",
   },
 });
 
-
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   const token = socket.handshake.auth?.token?.split(" ")[1];
 
   if (!token) {
@@ -36,27 +47,16 @@ io.on('connection', (socket) => {
     authenticatedSockets.add(socket);
     console.log(`✅ User ${decoded.id} connected`);
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       authenticatedSockets.delete(socket);
       console.log(`❌ User ${decoded.id} disconnected`);
     });
-
   } catch (err) {
     console.log("❌ Invalid token");
     socket.disconnect();
   }
 });
 
-
 initNotifyController(io);
-
-app.use(passport.initialize());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/", route);
-
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
