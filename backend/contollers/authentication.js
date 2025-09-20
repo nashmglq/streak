@@ -8,7 +8,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyGoogleToken = async (req, res) => {
   try {
     const { credential } = req.body;
-    console.log(credential);
+
     if (!credential)
       return res.status(400).json({ error: "Credentails are not provided" });
 
@@ -85,7 +85,7 @@ const getProfile = async (req, res) => {
   }
 };
 
-export const authCookie = (req, res) => {
+const authCookie = (req, res) => {
   try {
     // return true, we already have our middleware
     return res.json({ success: true });
@@ -95,7 +95,7 @@ export const authCookie = (req, res) => {
   }
 };
 
-export const logout = (req, res) => {
+const logout = (req, res) => {
   try {
     return res.clearCookie("token", {
       httpOnly: true,
