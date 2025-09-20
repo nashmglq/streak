@@ -4,7 +4,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { googleAuthActions } from "../actions/authActions";
 
-const LandingPage = () => {
+export const LandingPage = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   const userInfo = localStorage.getItem("userInfo");
@@ -64,4 +64,3 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;

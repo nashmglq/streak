@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LandingPage from "./screen/landingPage";
+import {LandingPage} from "./screen/landingPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Dashboard } from "./screen/dashboard";
 import { ProtectedRouting } from "./utils/protectedRoutes";
