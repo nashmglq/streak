@@ -10,7 +10,6 @@ const postStreak = async (req, res) => {
     const { streakName, goal } = req.body;
     const id = req.user.id;
 
-
     const findUser = await prisma.streak.findFirst({
       where: { userId: id, streakName: streakName },
     });
@@ -46,7 +45,8 @@ const postStreak = async (req, res) => {
 
     return res.status(400).json({ error: `"${streakName}" already exist` });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 
@@ -91,14 +91,15 @@ const getStreak = async (req, res) => {
 
     return res.status(200).json({ success: findUserStreaks });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 
 const getDetailViewStreak = async (req, res) => {
   try {
     const { streakId } = req.params;
-    const userId = req.user.id
+    const userId = req.user.id;
     const manilaNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const now = manilaNow.toISOString();
 
@@ -108,10 +109,12 @@ const getDetailViewStreak = async (req, res) => {
       where: { streakId: parseInt(streakId) },
     });
 
-
     if (!findStreakId) return res.status(400).json({ error: "No ID found." });
 
-    if(findStreakId.userId != userId) return res.status(400).json({error: "You are not the owner of this streak."})
+    if (findStreakId.userId != userId)
+      return res
+        .status(400)
+        .json({ error: "You are not the owner of this streak." });
 
     const coolDownTimeISO = findStreakId.coolDownTimer.toISOString();
     const endOfStreakISO = findStreakId.endOfTime.toISOString();
@@ -137,20 +140,24 @@ const getDetailViewStreak = async (req, res) => {
 
     return res.status(200).json({ success: findStreakId });
   } catch (err) {
-    return res.status(500).json({ success: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 
 const addStreakCount = async (req, res) => {
   try {
     const { streakId } = req.body;
-    const userId = req.user.id
+    const userId = req.user.id;
 
     const fetchStreak = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },
     });
 
-    if(fetchStreak.userId != userId) return res.status(400).json({error: "You are not the owner of this streak."})
+    if (fetchStreak.userId != userId)
+      return res
+        .status(400)
+        .json({ error: "You are not the owner of this streak." });
 
     if (!fetchStreak) {
       return res.status(404).json({ error: "Streak not found" });
@@ -196,14 +203,14 @@ const addStreakCount = async (req, res) => {
 
     return res.status(200).json({ success: updateStreakCount });
   } catch (err) {
-    console.error("Error updating streak:", err);
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 const AIresponse = async (req, res) => {
   try {
     const { streakId } = req.params;
-    const id = req.user.id
+    const id = req.user.id;
     const timeNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const getData = await prisma.streak.findUnique({
       where: { streakId: parseInt(streakId) },
@@ -216,7 +223,10 @@ const AIresponse = async (req, res) => {
       },
     });
 
-     if(getData.userId != id) return res.status(400).json({error: "You are not the owner of this streak."})
+    if (getData.userId != id)
+      return res
+        .status(400)
+        .json({ error: "You are not the owner of this streak." });
 
     const prompt = `You are a motivational coach and health progress indicator. Your task is to respond based on the user's goal, the title of their streak, and the number of streak days.
 
@@ -268,7 +278,8 @@ Additional instructions:
     });
     return res.status(200).json({ success: getAllAiResponse });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 
@@ -293,7 +304,8 @@ const deleteStreak = async (req, res) => {
         .json({ success: `Successfully deleted id ${streakId}` });
     }
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 
@@ -326,7 +338,8 @@ const updateStreak = async (req, res) => {
       .status(200)
       .json({ success: "Successfully Updated your streak." });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 

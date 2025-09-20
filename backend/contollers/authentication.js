@@ -8,6 +8,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyGoogleToken = async (req, res) => {
   try {
     const { credential } = req.body;
+    console.log(credential);
     if (!credential)
       return res.status(400).json({ error: "Credentails are not provided" });
 
@@ -31,7 +32,7 @@ const verifyGoogleToken = async (req, res) => {
           name,
           email,
           googleId, // Or pede din si sub
-          profilePic
+          profilePic,
         },
       });
     }
@@ -48,11 +49,14 @@ const verifyGoogleToken = async (req, res) => {
 
     if (user) return res.status(200).json({ success: { token: token } });
 
-    return res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict"
-    }).status(200).json({message: "Login Success"})
+    return res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+      })
+      .status(200)
+      .json({ success: "Login Success" });
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({ error: err.message });
@@ -65,12 +69,42 @@ const getProfile = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { id } });
 
-    return res
-      .status(200)
-      .json({ success: [{ email: user.email, id: user.id, name: user.name, picture: user.profilePic }] });
+    return res.status(200).json({
+      success: [
+        {
+          email: user.email,
+          id: user.id,
+          name: user.name,
+          picture: user.profilePic,
+        },
+      ],
+    });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
   }
 };
 
-module.exports = { verifyGoogleToken, getProfile };
+export const authCookie = (req, res) => {
+  try {
+    // return true, we already have our middleware
+    return res.json({ success: true });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    return res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+};
+
+module.exports = { verifyGoogleToken, getProfile, authCookie, logout };
