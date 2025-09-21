@@ -8,12 +8,11 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyGoogleToken = async (req, res) => {
   try {
     const { credential } = req.body;
-
-    if (!credential)
-      return res.status(400).json({ error: "Credentails are not provided" });
+    if (!credential) {
+      return res.status(400).json({ error: "Credentials are not provided" });
+    }
 
     const ticket = await client.verifyIdToken({
-      // renaming
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
@@ -26,39 +25,27 @@ const verifyGoogleToken = async (req, res) => {
     let user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      // update the user variable, so that we can re use it if user already exist
       user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          googleId, // Or pede din si sub
-          profilePic,
-        },
+        data: { name, email, googleId, profilePic },
       });
     }
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "3d",
-      }
-    );
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "3d",
+    });
 
-    if (user) return res.status(200).json({ success: { token: token } });
 
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: false, 
+        sameSite: "lax",
       })
       .status(200)
-      .json({ success: "Login Success" });
+      .json({ success: true });
+      
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
     return res.status(500).json({ error: err.message });
   }
 };

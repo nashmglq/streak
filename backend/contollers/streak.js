@@ -118,7 +118,7 @@ const getDetailViewStreak = async (req, res) => {
 
     const coolDownTimeISO = findStreakId.coolDownTimer.toISOString();
     const endOfStreakISO = findStreakId.endOfTime.toISOString();
-    console.log(coolDownTimeISO, now);
+ 
     if (coolDownTimeISO <= now) {
       await prisma.streak.update({
         where: { streakId: parseInt(streakId) },
