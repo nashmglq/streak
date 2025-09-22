@@ -22,14 +22,12 @@ export const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getStreakActions());
- 
   }, [dispatch]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       dispatch(getStreakActions());
     }, 1800000);
-
     return () => clearInterval(intervalId);
   }, [dispatch]);
 
@@ -39,7 +37,6 @@ export const Dashboard = () => {
         setActiveDropdown(null);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -73,12 +70,11 @@ export const Dashboard = () => {
                       <div className="flex justify-center items-center bg-yellow-50 text-yellow-600 font-semibold w-12 h-12 rounded-full">
                         {streak.currentStreak}
                       </div>
-
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-800 truncate">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-800 truncate w-full max-w-[150px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[240px]">
                           {streak.streakName}
                         </h3>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 truncate w-full max-w-[150px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[240px]">
                           Goal: {streak.goal}
                         </p>
                       </div>
@@ -91,7 +87,6 @@ export const Dashboard = () => {
                         </button>
                       </div>
                     </div>
-
                     <div className="flex justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
                       <span>Highest: {streak.highestStreak}</span>
                       <span
@@ -105,7 +100,6 @@ export const Dashboard = () => {
                   </div>
                 </div>
               </Link>
-
               {activeDropdown === streak.streakId && (
                 <div
                   ref={dropdownRef}
@@ -153,7 +147,6 @@ export const Dashboard = () => {
         </div>
       )}
       <CreateStreak />
-
       {showUpdateModal && (
         <div
           onClick={() => setShowUpdateModal(false)}
@@ -170,7 +163,6 @@ export const Dashboard = () => {
           </div>
         </div>
       )}
-
       {showDeleteModal && (
         <div
           onClick={() => setShowDeleteModal(false)}

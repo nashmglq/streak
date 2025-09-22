@@ -15,7 +15,7 @@ export const SideBar = () => {
   };
 
   const logoutHandler = () => {
-    dispatch(logoutActions())
+    dispatch(logoutActions(nav))
   };
 
   useEffect(() => {

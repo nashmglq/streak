@@ -96,7 +96,7 @@ export const authCheckActions = () => async (dispatch) => {
   }
 };
 
-export const logoutActions = () => async (dispatch) => {
+export const logoutActions = (nav) => async (dispatch) => {
   try {
     dispatch({ type: LOGOUT_RESET });
     dispatch({ type: LOGOUT_REQUEST });
@@ -111,11 +111,13 @@ export const logoutActions = () => async (dispatch) => {
     );
 
     if (response.data && response.data.success) {
-      dispatch({ type: POST_STREAK_RESET });
-      return dispatch({
+      dispatch({
         type: LOGOUT_SUCCESS,
         payload: response.data.success,
       });
+
+      nav("/");
+      return dispatch({ type: "RESET_STATE" });
     }
   } catch (err) {
     return dispatch({
