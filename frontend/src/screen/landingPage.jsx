@@ -7,7 +7,9 @@ import { googleAuthActions } from "../actions/authActions";
 export const LandingPage = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
-  const {loading, success, error, message} = useSelector((state)=> state.authCheck)
+  const { loading, success, error, message } = useSelector(
+    (state) => state.authCheck
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSuccess = async (googleCredentials) => {
@@ -28,7 +30,7 @@ export const LandingPage = () => {
 
   useEffect(() => {
     // if (userInfo) nav("/dashboard");
-    if(success) nav("/dashboard");
+    if (success) nav("/dashboard");
   }, []);
 
   return (
@@ -37,14 +39,17 @@ export const LandingPage = () => {
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-300 bg-clip-text text-transparent drop-shadow-sm mb-3 sm:mb-4 md:mb-6">
           AI-Powered Streak Counter
         </h1>
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-300 bg-clip-text text-transparent drop-shadow-sm mb-4 sm:mb-6">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-300 bg-clip-text text-transparent drop-shadow-sm mb-4 sm:mb-6 leading-tight inline-block">
           ⚡Streak⚡
         </h1>
+
         <div className="my-6 flex justify-center">
           {isLoading ? (
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-400"></div>
-              <span className="text-amber-400 font-medium">Signing you in...</span>
+              <span className="text-amber-400 font-medium">
+                Signing you in...
+              </span>
             </div>
           ) : (
             <GoogleLogin
@@ -64,4 +69,3 @@ export const LandingPage = () => {
     </div>
   );
 };
-

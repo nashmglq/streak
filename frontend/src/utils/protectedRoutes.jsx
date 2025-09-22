@@ -18,7 +18,7 @@ export const ProtectedRouting = ({ children }) => {
   if (success || login) renderNav = <SideBar />;
 
   useEffect(() => {
-    if (error) nav("/");
+    if (error && !login) nav("/");
   }, []);
 
   return (
