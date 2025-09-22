@@ -34,6 +34,8 @@ const verifyGoogleToken = async (req, res) => {
       expiresIn: "3d",
     });
 
+    console.log(process.env.NODE_ENV)
+
     return res
       .cookie("token", token, {
         httpOnly: true,
