@@ -35,6 +35,7 @@ const verifyGoogleToken = async (req, res) => {
     });
 
     console.log(process.env.NODE_ENV)
+    console.log(process.env.NODE_ENV === "production")
 
     return res
       .cookie("token", token, {
