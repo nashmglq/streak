@@ -1,17 +1,26 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, User, Menu, X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutActions } from "../actions/authActions";
 
 export const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+  const {loading, success, error, message} = useSelector((state) => state.logout);
   
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
+    dispatch(logoutActions())
   };
+
+  useEffect(() => {
+    if(success) nav("/")
+  }, [success])
 
   return (
     <>
@@ -44,13 +53,12 @@ export const SideBar = () => {
               </Link>
             </li>
             <li>
-              <Link
-                to="/"
+              <button
                 className="flex justify-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 p-2"
                 onClick={logoutHandler}
               >
                 <LogOut size={24} />
-              </Link>
+              </button>
             </li>
           </ul>
         </div>

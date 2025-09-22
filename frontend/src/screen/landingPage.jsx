@@ -7,7 +7,7 @@ import { googleAuthActions } from "../actions/authActions";
 export const LandingPage = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
-  const userInfo = localStorage.getItem("userInfo");
+  const {loading, success, error, message} = useSelector((state)=> state.authCheck)
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSuccess = async (googleCredentials) => {
@@ -27,7 +27,8 @@ export const LandingPage = () => {
   };
 
   useEffect(() => {
-    if (userInfo) nav("/dashboard");
+    // if (userInfo) nav("/dashboard");
+    if(success) nav("/dashboard");
   }, []);
 
   return (

@@ -5,7 +5,7 @@ import { authCheckActions } from "../actions/authActions";
 import {useDispatch, useSelector} from "react-redux"
 export const ProtectedRouting = ({ children }) => {
   const dispatch = useDispatch();
-  const {loading, success, error, message} = useSelector((state) => state.authCheck)
+  const {loading, success, error, message, login} = useSelector((state) => state.authCheck)
 
   useEffect(() => {
     dispatch(authCheckActions())
@@ -15,7 +15,7 @@ export const ProtectedRouting = ({ children }) => {
   const nav = useNavigate();
   let renderNav = null;
 
-  if (success) renderNav = <SideBar />;
+  if (success || login) renderNav = <SideBar />;
 
   useEffect(() => {
     if (error) nav("/");

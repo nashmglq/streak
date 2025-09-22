@@ -34,16 +34,14 @@ const verifyGoogleToken = async (req, res) => {
       expiresIn: "3d",
     });
 
-
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false, 
+        secure: false,
         sameSite: "lax",
       })
       .status(200)
       .json({ success: true });
-      
   } catch (err) {
     // console.log(err.message);
     return res.status(500).json({ error: err.message });
@@ -84,13 +82,14 @@ const authCookie = (req, res) => {
 
 const logout = (req, res) => {
   try {
-    return res.clearCookie("token", {
+    res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
     });
+    return res.status(200).json({ success: true, message: "Logged out" });
   } catch (err) {
-    console.log(err.message);
-    return res.status(500).json({ error: "Something went wrong." });
+    return res.status(500).json({ error: "Something went wrong" });
   }
 };
 
